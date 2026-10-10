@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>neuroUstaz · Ойындар</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#1e88e5;--red:#e53935;--green:#43a047;--yellow:#fdd835;--ink:#1a2a5a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--ink);background:linear-gradient(160deg,#29a3f5,#1565c0);user-select:none;-webkit-user-select:none;touch-action:manipulation;overflow-x:hidden}
+button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation;color:inherit}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* HOME */
+.home-head{text-align:center;padding:28px 16px 4px;color:#fff;position:relative}
+.home-head h1{font-size:clamp(38px,5vw,68px);font-weight:900;text-shadow:0 5px 0 rgba(0,0,0,.2);letter-spacing:.5px}
+.home-head p{font-size:clamp(20px,2.2vw,28px);font-weight:800;opacity:.92}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:26px;padding:24px clamp(16px,4vw,64px) 48px;max-width:1600px;margin:0 auto;width:100%}
+.gcard{background:#fff;border-radius:30px;padding:26px 16px 22px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:0 9px 0 rgba(0,0,0,.18);transition:transform .12s}
+.gcard:active{transform:translateY(7px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.gcard .ic{width:118px;height:118px;border-radius:50%;display:grid;place-items:center;font-size:64px}
+.gcard .t{font-size:26px;font-weight:900;text-align:center;line-height:1.15}
+.gcard .s{font-size:17px;font-weight:700;opacity:.6;text-align:center;line-height:1.2}
+.fs-btn{position:absolute;right:24px;top:24px}
+
+/* GAME */
+.topbar{display:flex;align-items:center;gap:14px;padding:16px 22px 6px;color:#fff}
+.tbtn{background:#fff;color:var(--ink);font-size:24px;font-weight:900;padding:14px 22px;border-radius:18px;box-shadow:0 6px 0 rgba(0,0,0,.2);white-space:nowrap}
+.tbtn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.ttitle{flex:1;text-align:center;font-size:clamp(26px,3vw,42px);font-weight:900;text-shadow:0 3px 0 rgba(0,0,0,.2)}
+.progress{display:flex;gap:10px;justify-content:center;padding:6px 16px;min-height:34px}
+.progress i{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.35);transition:.2s}
+.progress i.done{background:var(--yellow)}
+.progress i.cur{background:#fff;transform:scale(1.3)}
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:12px 20px 28px}
+.task-title{color:#fff;font-size:clamp(30px,3.4vw,50px);font-weight:900;text-align:center;text-shadow:0 4px 0 rgba(0,0,0,.25);line-height:1.15}
+.tiles{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
+.tile{min-width:124px;height:124px;padding:0 22px;background:#fff;border-radius:24px;font-size:66px;font-weight:900;color:var(--ink);box-shadow:0 8px 0 #8aa2cc;display:grid;place-items:center;line-height:1}
+.tile:active{transform:translateY(6px);box-shadow:0 2px 0 #8aa2cc}
+.tile.used{visibility:hidden}
+.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-16px)}40%,80%{transform:translateX(16px)}}
+.pop{animation:pop .35s}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.18)}100%{transform:scale(1)}}
+.speak{background:#fff;border-radius:50%;width:84px;height:84px;font-size:42px;box-shadow:0 6px 0 #8aa2cc;display:grid;place-items:center}
+.speak:active{transform:translateY(4px);box-shadow:0 2px 0 #8aa2cc}
+.row{display:flex;align-items:center;gap:24px;justify-content:center;flex-wrap:wrap}
+
+/* house */
+.house{display:flex;flex-direction:column;align-items:center}
+.roof{width:400px;height:128px;background:var(--red);clip-path:polygon(50% 0,100% 100%,0 100%);display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;color:#fff;font-size:68px;font-weight:900}
+.hbody{width:340px;border:9px solid var(--red);border-top-width:0;background:#d4ebfc}
+.hrow{display:flex;justify-content:space-around;align-items:center;height:86px;border-top:7px solid var(--red)}
+.hc{width:104px;height:70px;font-size:56px;font-weight:900;display:grid;place-items:center;border-radius:14px}
+.hc.empty{background:#fff;border:4px dashed #9fb3d6}
+.hc.ex{color:#2e7d32}
+.hrow.example{background:#e3f6e1}
+.hc.empty.over{background:#fff59d;border:5px solid #f9a825}
+.tile.dragging{position:relative;z-index:50;pointer-events:none;box-shadow:0 18px 30px rgba(0,0,0,.3)}
+.howto{color:#fff;font-size:28px;font-weight:900;background:rgba(0,0,0,.18);padding:8px 22px;border-radius:16px}
+.drop.over{box-shadow:0 0 0 9px #fdd835 !important;transform:scale(1.06)}
+.box.big{width:150px;height:150px;font-size:90px;font-weight:900}
+.cbtn.dragging{position:relative;z-index:50;pointer-events:none}
+.firstw .blank{min-height:110px;border-radius:12px 12px 0 0}
+.firstw .blank.drop{background:rgba(255,255,255,.2)}
+.rtext{background:#fff;border-radius:30px;padding:26px 50px;font-size:clamp(32px,2.8vw,48px);line-height:1.5;font-weight:800;max-width:1550px;color:var(--ink);box-shadow:0 10px 0 rgba(0,0,0,.15)}
+.rtext h3{text-align:center;color:var(--red);font-size:1.2em;margin-bottom:6px}
+.sclock{font-size:46px;font-weight:900;color:#fff;background:rgba(0,0,0,.22);padding:4px 24px;border-radius:16px;font-variant-numeric:tabular-nums;min-width:120px;text-align:center}
+.duel{display:flex;gap:24px;width:100%;align-self:stretch;flex:1}
+.side{flex:1;border-radius:30px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.side.s0{background:rgba(229,57,53,.28);border:6px solid #ef5350}.side.s1{background:rgba(67,160,71,.28);border:6px solid #66bb6a}
+.shead{font-size:42px;font-weight:900;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.25)}
+.sdots{display:flex;gap:8px}.sdots i{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.35)}.sdots i.done{background:var(--yellow)}.sdots i.cur{background:#fff}
+.seq{display:flex;align-items:center;gap:18px;font-size:84px;font-weight:900;color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.25);min-height:150px}
+.sdone{font-size:64px}
+.bins{display:flex;gap:26px;flex-wrap:wrap;justify-content:center}
+.bin{min-width:320px;min-height:200px;border-radius:30px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:12px;border:6px solid #fff;box-shadow:0 9px 0 rgba(0,0,0,.2);cursor:pointer}
+.bl{font-size:42px;font-weight:900;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.2)}
+.bc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:420px}
+.chip{background:#fff;border-radius:12px;padding:4px 14px;font-size:34px;font-weight:900}
+.tile.picked{box-shadow:0 0 0 9px #fdd835}
+.tile.wide{font-size:48px}
+.eq.conv{font-size:clamp(56px,5vw,84px);flex-wrap:wrap;justify-content:center}
+.box.wide{width:auto;min-width:220px;padding:0 20px;font-size:.85em}
+.hrow.active .hc.empty{border:5px solid var(--yellow);box-shadow:0 0 0 7px rgba(253,216,53,.55)}
+
+/* ten */
+.dots{display:grid;grid-template-columns:repeat(5,54px);gap:14px;background:#fff;padding:18px;border-radius:22px;box-shadow:0 8px 0 rgba(0,0,0,.15)}
+.dot{width:54px;height:54px;border-radius:50%;border:4px solid #e3eaf5}
+.dot.r{background:var(--red)}.dot.b{background:var(--blue)}
+.eq{display:flex;align-items:center;gap:20px;color:#fff;font-size:96px;font-weight:900;text-shadow:0 5px 0 rgba(0,0,0,.25)}
+.box{width:124px;height:124px;border-radius:22px;background:rgba(255,255,255,.35);border:5px solid #fff;display:grid;place-items:center;color:#fff}
+.box.filled{background:#fff;color:var(--ink);text-shadow:none}
+
+/* word */
+.pic{font-size:150px;line-height:1;filter:drop-shadow(0 8px 0 rgba(0,0,0,.15))}
+.slots{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.slot{width:112px;height:136px;border-radius:20px;border:5px dashed rgba(255,255,255,.85);display:grid;place-items:center;font-size:76px;font-weight:900;color:#fff}
+.slot.filled{border:5px solid #fff;background:#fff;color:var(--red)}
+.slot.next{box-shadow:0 0 0 7px rgba(253,216,53,.7)}
+
+/* pyramid */
+.pyr{display:flex;flex-direction:column;align-items:center;gap:22px;background:rgba(255,255,255,.15);padding:28px 40px;border-radius:30px}
+.prow{display:flex;gap:60px}
+.pc{width:126px;height:126px;border-radius:50%;background:#fff;border:7px solid #64b5f6;font-size:64px;font-weight:900;display:grid;place-items:center;color:var(--ink)}
+.pc.empty{background:#e8f4fe;border-style:dashed;color:transparent}
+.pc.sel{border:7px solid var(--yellow);box-shadow:0 0 0 8px rgba(253,216,53,.55)}
+.rule{background:#fff8e1;color:var(--ink);font-size:28px;font-weight:900;padding:12px 26px;border-radius:18px;text-align:center}
+
+/* reading */
+.bigbtn{font-size:46px;font-weight:900;color:#fff;padding:24px 56px;border-radius:30px;box-shadow:0 9px 0 rgba(0,0,0,.25)}
+.bigbtn:active{transform:translateY(7px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.bigbtn.green{background:#2e9e44}.bigbtn.red{background:#d32f2f}
+.wordcard{background:#fff;border-radius:34px;padding:40px 80px;font-size:clamp(80px,10vw,150px);font-weight:900;color:var(--blue);box-shadow:0 10px 0 rgba(0,0,0,.18);min-width:520px;text-align:center}
+.timer{width:min(760px,90vw);height:30px;background:rgba(255,255,255,.3);border-radius:20px;overflow:hidden}
+.timer i{display:block;height:100%;background:var(--yellow);width:100%;transition:width 1s linear}
+.counter{color:#fff;font-size:36px;font-weight:900}
+.sentence{background:linear-gradient(180deg,#ffe259,#ffc93c);border-radius:34px;padding:44px 56px;font-size:clamp(60px,7vw,110px);font-weight:900;text-align:center;line-height:1.25;max-width:1300px;box-shadow:0 10px 0 rgba(0,0,0,.18);-webkit-text-stroke:2px #fff;paint-order:stroke fill}
+.sentence .w0{color:var(--red)}.sentence .w1{color:#1565c0}
+
+/* scheme */
+.scheme{background:#fff;border-radius:30px;padding:30px 40px;display:flex;flex-direction:column;align-items:center;gap:20px;box-shadow:0 10px 0 rgba(0,0,0,.15)}
+.scheme .lt{display:flex;gap:26px}
+.scheme .lt b{width:96px;text-align:center;font-size:84px;font-weight:900;color:var(--ink)}
+.scheme .sc{display:flex;gap:26px;background:#eef3fa;padding:14px 18px;border-radius:24px}
+.circ{width:80px;height:80px;border-radius:50%;background:#dfe7f2;border:4px dashed #b0bfd6;margin:0 8px}
+.circ.r{background:var(--red);border:4px solid #fff}.circ.b{background:var(--blue);border:4px solid #fff}
+.circ.next{box-shadow:0 0 0 7px rgba(253,216,53,.8)}
+.cbtn{width:150px;height:150px;border-radius:50%;border:8px solid #fff;box-shadow:0 8px 0 rgba(0,0,0,.25)}
+.cbtn:active{transform:translateY(6px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.cbtn.r{background:var(--red)}.cbtn.b{background:var(--blue)}
+.legend{color:var(--ink);background:#fff;padding:10px 26px;border-radius:18px;font-size:28px;font-weight:900;display:flex;gap:40px}
+.legend span{display:flex;align-items:center;gap:10px}
+.legend i{width:30px;height:30px;border-radius:50%;display:inline-block;border:3px solid #fff}
+
+/* count / compare */
+.objs{background:#fff;border-radius:30px;padding:26px;display:grid;grid-template-columns:repeat(5,92px);gap:12px;font-size:76px;line-height:92px;text-align:center;box-shadow:0 10px 0 rgba(0,0,0,.15);min-height:140px}
+.cmp{display:flex;align-items:center;gap:30px}
+.cmp .objs{grid-template-columns:repeat(3,80px);font-size:62px;line-height:80px;padding:20px;min-width:300px}
+.sign{width:130px;height:130px;border-radius:24px;border:5px dashed #fff;display:grid;place-items:center;font-size:90px;font-weight:900;color:#fff}
+.sign.filled{background:#fff;color:var(--red);border-style:solid}
+.firstw{display:flex;gap:10px;font-size:96px;font-weight:900;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.25)}
+.firstw .blank{width:100px;border-bottom:10px solid var(--yellow);text-align:center}
+.firstw .blank.filled{color:var(--yellow)}
+
+/* final */
+#final{position:fixed;inset:0;background:rgba(10,30,80,.6);display:none;align-items:center;justify-content:center;z-index:20}
+#final.show{display:flex}
+.fbox{background:#fff;border-radius:40px;padding:44px 70px;text-align:center;box-shadow:0 14px 0 rgba(0,0,0,.25);animation:pop .5s}
+.fbox .stars{font-size:90px}
+.fbox h2{font-size:clamp(70px,9vw,120px);font-weight:900;color:var(--green);line-height:1.05}
+.fbox p{font-size:36px;font-weight:900;margin:10px 0 26px}
+.fbox .row{gap:24px}
+.fbox .tbtn{font-size:30px;padding:18px 30px;background:var(--blue);color:#fff}
+#flash{position:fixed;left:50%;top:18%;transform:translateX(-50%);font-size:70px;font-weight:900;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.3);pointer-events:none;opacity:0;transition:opacity .2s;z-index:15;white-space:nowrap}
+#flash.show{opacity:1}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
+</style>
+</head>
+<body>
+
+<section id="home" class="screen active">
+  <div class="home-head">
+    <h1>🧠 neuroUstaz</h1>
+    <p>Ойнап үйренеміз!</p>
+    <button class="tbtn fs-btn" onclick="toggleFS()">⛶ Толық экран</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<section id="game" class="screen">
+  <div class="topbar">
+    <button class="tbtn" onclick="goHome()">🏠 Басты бет</button>
+    <div class="ttitle" id="gtitle"></div>
+    <button class="tbtn" id="sndBtn" onclick="toggleSound()">🔊</button>
+  </div>
+  <div class="progress" id="progress"></div>
+  <div class="stage" id="stage"></div>
+</section>
+
+<div id="final">
+  <div class="fbox">
+    <div class="stars">⭐⭐⭐</div>
+    <h2>Жарайсың!</h2>
+    <p id="fmsg">Барлық тапсырма орындалды!</p>
+    <div class="row">
+      <button class="tbtn" onclick="restart()">🔁 Қайтадан</button>
+      <button class="tbtn" onclick="goHome()">🏠 Басты бет</button>
+    </div>
+  </div>
+</div>
+<div id="flash"></div>
+<canvas id="confetti"></canvas>
+
+<script>
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const el=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e};
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=(a,n)=>shuffle(a).slice(0,n);
+function options(correct,count,min,max){const s=new Set([correct]);let g=0;while(s.size<count&&g++<200){const v=correct+rnd(-3,3);if(v>=min&&v<=max)s.add(v)}return shuffle([...s])}
+
+/* ---------- sound ---------- */
+let soundOn=true,AC=null;
+function tone(f,d,t=0,type='sine',v=.25){AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;const n=AC.currentTime+t;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(AC.destination);o.start(n);o.stop(n+d)}
+function beep(k){if(!soundOn)return;try{
+  if(k==='good'){tone(660,.15);tone(880,.15,.12);tone(1320,.3,.24)}
+  else if(k==='bad'){tone(180,.3,0,'square',.1)}
+  else if(k==='tap'){tone(600,.1,0,'sine',.18)}
+  else if(k==='win'){[523,659,784,1047,1319].forEach((f,i)=>tone(f,.4,i*.14))}
+}catch(e){}}
+function toggleSound(){soundOn=!soundOn;$('#sndBtn').textContent=soundOn?'🔊':'🔇';}
+
+/* ---------- drag & tap ---------- */
+function dragTile(tile,onTap,onDrop){
+  tile.addEventListener('pointerdown',e=>{
+    if(tile.classList.contains('used'))return;
+    e.preventDefault();const sx=e.clientX,sy=e.clientY;let moved=false,over=null;
+    try{tile.setPointerCapture(e.pointerId)}catch(_){}
+    const target=ev=>{const t=document.elementFromPoint(ev.clientX,ev.clientY);return t&&t.closest('.drop')};
+    const move=ev=>{const dx=ev.clientX-sx,dy=ev.clientY-sy;
+      if(!moved&&Math.hypot(dx,dy)>12){moved=true;tile.classList.add('dragging')}
+      if(!moved)return;tile.style.transform=`translate(${dx}px,${dy}px) scale(1.12)`;
+      const t=target(ev);if(t!==over){over&&over.classList.remove('over');over=t;over&&over.classList.add('over')}};
+    const up=ev=>{tile.removeEventListener('pointermove',move);tile.removeEventListener('pointerup',up);tile.removeEventListener('pointercancel',up);
+      const t=moved?target(ev):null;over&&over.classList.remove('over');
+      tile.style.transform='';tile.classList.remove('dragging');
+      if(!moved)onTap();else if(t)onDrop(t)};
+    tile.addEventListener('pointermove',move);tile.addEventListener('pointerup',up);tile.addEventListener('pointercancel',up);
+  });
+}
+
+/* ---------- feedback ---------- */
+let flashT;
+function flash(t){const f=$('#flash');f.textContent=t;f.classList.add('show');clearTimeout(flashT);flashT=setTimeout(()=>f.classList.remove('show'),900)}
+function wrong(e){e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake');beep('bad');flash('Тағы байқап көр 🙂')}
+function popIn(e){e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')}
+let CF=0;function stopConfetti(){CF++;const c=$('#confetti');c.getContext('2d').clearRect(0,0,c.width,c.height)}
+function confetti(){const my=++CF,c=$('#confetti'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+  const cols=['#e53935','#fdd835','#43a047','#1e88e5','#8e24aa','#fb8c00'];
+  const P=Array.from({length:200},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.6,vx:-2+Math.random()*4,vy:3+Math.random()*5,s:10+Math.random()*12,r:Math.random()*6,vr:-.2+Math.random()*.4,c:cols[rnd(0,5)]}));
+  let t=0;(function f(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()});
+  if(my!==CF)return;if(++t<260)requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height)})()}
+
+/* ---------- data ---------- */
+const EMO={'АЛМА':'🍎','БАЛЫҚ':'🐟','ҚОЯН':'🐰','МЫСЫҚ':'🐱','КІТАП':'📖','ҚАЛАМ':'✏️','ТҮЛКІ':'🦊','ДОП':'⚽','КЕМЕ':'⛵','ҰШАҚ':'✈️','БАҚА':'🐸','ЛИМОН':'🍋','ЕСІК':'🚪','ТОРТ':'🎂','НАН':'🍞','ШАР':'🎈','ЖЫЛАН':'🐍','САҒАТ':'⏰','ИТ':'🐶','АЮ':'🐻','ГҮЛ':'🌸','КҮН':'☀️','АЙ':'🌙','ҮЙ':'🏠','ПІЛ':'🐘','ЖҰЛДЫЗ':'⭐','ӨРМЕКШІ':'🕷️','ОРЫНДЫҚ':'🪑','ЕШКІ':'🐐','СИЫР':'🐄','ҚҰС':'🐦','АРЫСТАН':'🦁','ҚАРБЫЗ':'🍉','ҚАР':'❄️','ШАНА':'🛷','АЙНА':'🪞','ҚАУЫН':'🍈','ЖАҢБЫР':'🌧️','АУА':'🌬️','БҰЛТ':'☁️','ТЫШҚАН':'🐭','АҒАШ':'🌳','СӘБІЗ':'🥕'};
+const BUILD_MAIN=['ҚАР','ШАНА','ЕСІК','ЕШКІ','АЙНА','АЛМА','ҚАУЫН','ЖАҢБЫР','АУА','БҰЛТ'];
+const BUILD_EXTRA=['ҚОЯН','БАЛЫҚ','МЫСЫҚ','КІТАП','ҚАЛАМ','ТҮЛКІ','КЕМЕ','ҰШАҚ','БАҚА','ЛИМОН','ТОРТ','ЖЫЛАН','САҒАТ','ТЫШҚАН','АҒАШ','СӘБІЗ','КҮН','ДОП'];
+const LETTERS='АӘБГҒДЕЖЗИКҚЛМНОӨПРСТҰҮШЫІ'.split('');
+const VOWELS='АӘЕОӨҰҮЫІЭ';
+const SCHEME=['ЛАҚ','ҚАЛА','АУЛА','АЗЫҚ','ҚЫЗЫҚ','ТАУЫҚ','ҚЫЗ','ҚЫЗАНАҚ','ТАРАЗ','АУЫЗ','СУЫҚ','СУЛЫ','ҚАУЫЗ'];
+const READ_WORDS=['ана','ата','апа','аға','әке','ол','сол','бал','нан','ай','үй','қар','тас','ит','ат','бала','қала','дала','кеме','күн','гүл','көл','бақ','тау','су','қаз','оқ','доп','сал','бас','көз','қол','аяқ','мұз','жол','сөз','дос','бір','екі','үш','тұз','ет','сүт','шай','бұл','мен','сен','қасық','балық','қалам','кітап','мектеп','алма','ағаш','есік','бақа','қоян','мысық','терезе','орындық'];
+const SENTENCES=['Ол – қала.','Бұл – үй.','Мысық сүт ішті.','Күн жылы.','Дала кең.','Қар жауды.','Бала доп ойнады.','Апам нан пісірді.','Айгүл кітап оқыды.','Алма қызыл.','Құс ұшты.','Ит үреді.','Көлде балық бар.','Ағаш биік.','Асан – оқушы.','Біз мектепке барамыз.','Атам бақта жүр.','Қоян сәбіз жеді.'];
+const OBJ=['🍎','⭐','🐟','🎈','🌸','🐞','🍓','⚽','🚗','🐥'];
+const N_TASKS=8;
+const TEXTS=[
+{t:'Қыс',b:'Қыс келді. Далаға ақ қар жауды. Балалар шана алып, тауға шықты. Асан мен Айгүл шанамен сырғанады. Олар қардан аққала жасады. Аққаланың мұрны – сәбіз, көзі – көмір. Балалар қатты қуанды. Кешке олар үйге қайтты. Анасы оларға ыстық шай берді.'},
+{t:'Мысық',b:'Біздің үйде мысық бар. Оның аты – Мими. Мимидің жүні ақ, көзі көк. Ол сүт ішкенді жақсы көреді. Мими доппен ойнайды. Түнде ол тышқан аулайды. Мен мысығымды жақсы көремін. Оны күнде тамақтандырамын.'},
+{t:'Бақша',b:'Атамның бақшасы бар. Бақшада алма, алмұрт, өрік өседі. Жазда біз атама көмектесеміз. Ағаштарға су құямыз. Күзде алма піседі. Біз алманы теріп, себетке саламыз. Апам алмадан тәтті тосап жасайды. Біз тосапты шаймен ішеміз.'},
+{t:'Мектеп',b:'Мен мектепке барамын. Менің мектебім үлкен әрі әдемі. Сыныбымызда жиырма бес оқушы бар. Мұғаліміміз – Сәуле апай. Ол бізге оқуды, жазуды үйретеді. Үзілісте біз доп ойнаймыз. Мен мектебімді жақсы көремін.'}];
+const CONS={k:['П','Т','К','Қ','С','Ш'],u:['Б','В','Г','Ғ','Д','Ж','З'],n:['М','Н','Ң','Л','Р','Й','У']};
+const HARDSOFT={h:['АТА','БАЛА','ҚАЛА','ДОП','ҚАР','ТАУ','ҰШАҚ','БАЛЫҚ','МЫСЫҚ','ҚОЯН','АЛМА','ЖАҢБЫР','БҰЛТ','ҚАУЫН','ШАНА','ТЫШҚАН','САҒАТ','ТОРТ','ҚАЗ'],
+ s:['ӘКЕ','КЕМЕ','ЕШКІ','ЕСІК','ГҮЛ','КҮН','ҮЙ','ӨРІК','СӘБІЗ','ТЕРЕЗЕ','ЖҮЗІМ','ТҮЛКІ','КӨЛ','БӨЛМЕ','ДӘПТЕР','ІНІ','СҮТ','ТЕРЕК']};
+const fmt=t=>t.toFixed(1);
+function sortGame(c){return{...c,
+  make:()=>Array.from({length:c.n},()=>shuffle(c.bins.flatMap(b=>pick(c.pool[b.k],c.per).map(v=>({v,k:b.k}))))),
+  render(items,st,done){
+    st.append(el('div','task-title',c.q));
+    const tiles=el('div','tiles'),row=el('div','bins');
+    const bins=c.bins.map(b=>{const d=el('div','bin drop',`<div class="bl">${b.label}</div><div class="bc"></div>`);d.style.background=b.color;d.dataset.k=b.k;row.append(d);return d});
+    let sel=null,left=items.length;
+    const put=(it,t,bin)=>{if(bin.dataset.k!==it.k)return wrong(t);beep('tap');const ch=el('span','chip',it.v);bin.querySelector('.bc').append(ch);popIn(ch);t.classList.add('used');t.classList.remove('picked');if(sel===t)sel=null;if(!--left)done()};
+    items.forEach(it=>{const t=el('button','tile'+(c.wide?' wide':''),it.v);t._it=it;
+      dragTile(t,()=>{if(sel)sel.classList.remove('picked');sel=t;t.classList.add('picked')},b=>put(it,t,b));tiles.append(t)});
+    bins.forEach(b=>b.addEventListener('click',()=>{if(sel)put(sel._it,sel,b)}));
+    st.append(tiles,row,el('div','howto','👆 Ұстап, керек себетке апар'));
+  }}}
+
+/* ---------- games ---------- */
+const GAMES=[
+{ id:'house', title:'Санның құрамы', icon:'🏠', bg:'#ffcdd2', sub:'Үйшіктегі бос орынды толтыр',
+  make:()=>shuffle([5,6,7,8,9,10]),
+  render(N,st,done){
+    st.append(el('div','task-title','Үйшікті толтыр'));
+    const h=el('div','house');h.append(el('div','roof',N));
+    const body=el('div','hbody'),rows=[];
+    for(let a=1;a<=Math.floor(N/2);a++){const r=el('div','hrow',`<div class="hc">${a}</div><div class="hc empty drop"></div>`);body.append(r);rows.push({r,ans:N-a,cell:r.lastChild,filled:false})}
+    h.append(body);st.append(h);
+    const pre=0;
+    rows.slice(0,pre).forEach(x=>{x.filled=true;x.cell.textContent=x.ans;x.cell.className='hc ex';x.r.classList.add('example')});
+    const nextRow=()=>rows.find(x=>!x.filled);
+    const mark=()=>{const n=nextRow();rows.forEach(x=>x.r.classList.toggle('active',x===n))};mark();
+    const fill=(row,v,t)=>{beep('tap');row.filled=true;row.cell.textContent=v;row.cell.className='hc';popIn(row.cell);t.classList.add('used');mark();if(!nextRow())done()};
+    st.append(el('div','howto','👆 Санды ұстап, бос ұяшыққа апар'));
+    const tiles=el('div','tiles');
+    shuffle(rows.filter(x=>!x.filled).map(x=>x.ans)).forEach(v=>{const t=el('button','tile',v);
+      dragTile(t,()=>{const row=nextRow();v===row.ans?fill(row,v,t):wrong(t)},
+        drop=>{const row=rows.find(x=>x.cell===drop);if(!row||row.filled)return;v===row.ans?fill(row,v,t):wrong(t)});
+      tiles.append(t)});
+    st.append(tiles);
+  }},
+{ id:'ten', title:'10 саны қалай алынды?', icon:'🔟', bg:'#bbdefb', sub:'Жетпейтін санды тап',
+  make:()=>pick([1,2,3,4,5,6,7,8,9],N_TASKS).map(b=>({a:10-b,b,miss:Math.random()<.5?'a':'b'})),
+  render(t,st,done){
+    st.append(el('div','task-title','10 саны қалай алынды?'));
+    const d=el('div','dots');for(let i=0;i<10;i++)d.append(el('div','dot '+(i<t.a?'r':'b')));st.append(d);
+    const ans=t[t.miss],eq=el('div','eq'),box=el('div','box drop','');
+    eq.append(t.miss==='a'?box:el('span','',t.a),el('span','','+'),t.miss==='b'?box:el('span','',t.b),el('span','','= 10'));
+    st.append(eq);
+    const tiles=el('div','tiles');
+    options(ans,3,0,10).forEach(v=>{const b=el('button','tile',v);
+      const put=()=>{if(v!==ans)return wrong(b);box.textContent=v;box.className='box filled';popIn(box);b.classList.add('used');done()};
+      dragTile(b,put,put);tiles.append(b)});
+    st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
+  }},
+{ id:'build', title:'Сөз құрастыр', icon:'🔤', bg:'#d1c4e9', sub:'Әріптерден сөз құра',
+  make:()=>shuffle([...BUILD_MAIN,...pick(BUILD_EXTRA,5)]),
+  render(w,st,done){
+    st.append(el('div','task-title','Суретке қарап, сөзді құра'));
+    st.append(el('div','pic',EMO[w]));
+    const slots=el('div','slots'),ss=[...w].map(()=>{const s=el('div','slot drop');slots.append(s);return s});st.append(slots);
+    const filled=[...w].map(()=>false),first=()=>filled.indexOf(false);
+    const mark=()=>ss.forEach((x,i)=>x.classList.toggle('next',i===first()));mark();
+    const fill=(i,L,b)=>{beep('tap');filled[i]=true;ss[i].textContent=L;ss[i].className='slot filled';popIn(ss[i]);b.classList.add('used');mark();if(first()<0)done()};
+    let order=shuffle([...w]);if(w.length>1)for(let g=0;g<20&&order.join('')===w;g++)order=shuffle([...w]);
+    const tiles=el('div','tiles');
+    order.forEach(L=>{const b=el('button','tile',L);
+      dragTile(b,()=>{const i=first();L===w[i]?fill(i,L,b):wrong(b)},
+        t=>{const i=ss.indexOf(t);if(i<0||filled[i])return;L===w[i]?fill(i,L,b):wrong(b)});
+      tiles.append(b)});
+    st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
+  }},
+{ id:'pyramid', title:'Математикалық пирамида', icon:'🔺', bg:'#c8e6c9', sub:'Бос дөңгелектерді толтыр',
+  make(){const out=[];while(out.length<N_TASKS){const b=[rnd(10,24),rnd(10,24),rnd(10,24)],m=[b[0]+b[1],b[1]+b[2]],vals=[m[0]+m[1],m[0],m[1],b[0],b[1],b[2]];
+    const hid=pick([0,1,2,3,4,5],3);if(solvable(hid))out.push({vals,hid})}return out},
+  render(t,st,done){
+    st.append(el('div','rule','Жоғарғы сан — астындағы екі санның қосындысы'));
+    const p=el('div','pyr'),cells=[];
+    [[0],[1,2],[3,4,5]].forEach(r=>{const row=el('div','prow');r.forEach(i=>{const hidden=t.hid.includes(i);const c=el('div','pc'+(hidden?' empty drop':''),hidden?'?':t.vals[i]);cells[i]=c;row.append(c)});p.append(row)});
+    st.append(p);
+    const empties=()=>t.hid.filter(i=>cells[i].classList.contains('empty'));
+    const ready=i=>REL.some(r=>r.includes(i)&&r.filter(j=>empties().includes(j)).length===1);
+    let sel=null;const setSel=i=>{sel=i;cells.forEach((c,j)=>c.classList.toggle('sel',j===i))};
+    const mark=()=>{const e=empties();setSel([...e].sort((a,b)=>b-a).find(ready)??e[0]??null)};mark();
+    t.hid.forEach(i=>cells[i].addEventListener('click',()=>{if(cells[i].classList.contains('empty'))setSel(i)}));
+    const fill=(i,v,b)=>{beep('tap');const c=cells[i];c.textContent=v;c.className='pc';popIn(c);b.classList.add('used');if(!empties().length){setSel(null);done()}else mark()};
+    const hv=t.hid.map(i=>t.vals[i]),extra=[];let g=0;
+    while(extra.length<2&&g++<100){const v=hv[rnd(0,hv.length-1)]+rnd(-9,9);if(v>=10&&!hv.includes(v)&&!extra.includes(v))extra.push(v)}
+    const tiles=el('div','tiles');
+    shuffle([...hv,...extra]).forEach(v=>{const b=el('button','tile',v);
+      dragTile(b,()=>{sel!=null&&v===t.vals[sel]?fill(sel,v,b):wrong(b)},
+        c=>{const i=cells.indexOf(c);if(i<0||!c.classList.contains('empty'))return;v===t.vals[i]?fill(i,v,b):wrong(b)});
+      tiles.append(b)});
+    st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
+  }},
+{ id:'minute', title:'1 минутта оқы', icon:'⏱️', bg:'#fff9c4', sub:'Мәтінді 1 минутта оқып шық', noProgress:true,
+  make:()=>[0],
+  render(_,st,done,alive){
+    st.append(el('div','task-title','Мәтінді 1 минут ішінде оқып шық!'));
+    const go=el('button','bigbtn green','БАСТАУ 🚀');st.append(go);
+    go.onclick=()=>{st.innerHTML='';const T=TEXTS[rnd(0,TEXTS.length-1)];
+      const tr=el('div','row'),tm=el('div','timer','<i></i>'),bar=tm.firstChild,clk=el('div','sclock','60');bar.style.transition='width .2s linear';
+      tr.append(tm,clk);st.append(tr,el('div','rtext',`<h3>${T.t}</h3>${T.b}`));
+      const fin=el('button','bigbtn red','ОҚЫП БОЛДЫМ! ✅');st.append(fin);
+      const t0=performance.now();let over=false,iv;
+      const stop=m=>{if(over)return;over=true;clearInterval(iv);done(m)};
+      fin.onclick=()=>stop(`Сен мәтінді ${Math.round((performance.now()-t0)/1000)} секундта оқыдың!`);
+      iv=setInterval(()=>{if(!alive())return clearInterval(iv);const left=Math.max(0,60-(performance.now()-t0)/1000);bar.style.width=(left/60*100)+'%';clk.textContent=Math.ceil(left);if(left<=0)stop('Уақыт бітті! ⏰')},200)};
+  }},
+{ id:'scheme', title:'Сөздің сызбасы', icon:'🔴', bg:'#f8bbd0', sub:'Дауысты – қызыл, дауыссыз – көк',
+  make:()=>pick(SCHEME,10),
+  render(w,st,done){
+    st.append(el('div','task-title',`«${w}» сөзінің сызбасын жаса`));
+    const box=el('div','scheme'),lt=el('div','lt'),sc=el('div','sc');
+    [...w].forEach(L=>lt.append(el('b','',L)));const cs=[...w].map(()=>{const c=el('div','circ drop');sc.append(c);return c});
+    box.append(lt,sc);st.append(box);
+    st.append(el('div','legend','<span><i style="background:#e53935"></i>дауысты</span><span><i style="background:#1e88e5"></i>дауыссыз</span>'));
+    const filled=[...w].map(()=>false),first=()=>filled.indexOf(false);
+    const mark=()=>cs.forEach((x,i)=>x.classList.toggle('next',i===first()));mark();
+    const need=i=>VOWELS.includes(w[i])?'r':'b';
+    const fill=(i,c)=>{beep('tap');filled[i]=true;cs[i].className='circ '+c;popIn(cs[i]);mark();if(first()<0)done()};
+    const r=el('div','row');
+    ['r','b'].forEach(c=>{const b=el('button','cbtn '+c);
+      dragTile(b,()=>{const i=first();c===need(i)?fill(i,c):wrong(b)},
+        t=>{const i=cs.indexOf(t);if(i<0||filled[i])return;c===need(i)?fill(i,c):wrong(b)});
+      r.append(b)});
+    st.append(r);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
+  }},
+{ id:'count', title:'Санап шық', icon:'🍎', bg:'#dcedc8', sub:'Заттарды сана',
+  make:()=>pick([1,2,3,4,5,6,7,8,9,10],N_TASKS).map(n=>({n,o:OBJ[rnd(0,OBJ.length-1)]})),
+  render(t,st,done){
+    st.append(el('div','task-title','Нешеу?'));
+    const g=el('div','objs');for(let i=0;i<t.n;i++)g.append(el('span','',t.o));
+    const box=el('div','box drop big',''),row=el('div','row');row.append(g,el('div','eq','='),box);st.append(row);
+    const tiles=el('div','tiles');
+    options(t.n,3,1,10).forEach(v=>{const b=el('button','tile',v);
+      const put=()=>{if(v!==t.n)return wrong(b);box.textContent=v;box.className='box filled big';popIn(box);b.classList.add('used');done()};
+      dragTile(b,put,put);tiles.append(b)});
+    st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
+  }},
+{ id:'compare', title:'Салыстыр', icon:'⚖️', bg:'#b2ebf2', sub:'Қай жақта көп?',
+  make:()=>Array.from({length:N_TASKS},(_,i)=>{const a=rnd(1,9);const b=i%4===3?a:rnd(1,9);return{a,b,o:OBJ[rnd(0,OBJ.length-1)]}}),
+  render(t,st,done){
+    st.append(el('div','task-title','Салыстыр: &gt; &lt; ='));
+    const ans=t.a>t.b?'>':t.a<t.b?'<':'=';
+    const g=n=>{const d=el('div','objs');for(let i=0;i<n;i++)d.append(el('span','',t.o));return d};
+    const sign=el('div','sign drop','');const c=el('div','cmp');c.append(g(t.a),sign,g(t.b));st.append(c);
+    const tiles=el('div','tiles');
+    ['>','<','='].forEach(v=>{const b=el('button','tile',v.replace('>','&gt;').replace('<','&lt;'));
+      const put=()=>{if(v!==ans)return wrong(b);sign.textContent=v;sign.className='sign filled';popIn(sign);b.classList.add('used');done()};
+      dragTile(b,put,put);tiles.append(b)});
+    st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
+  }},
+{ id:'first', title:'Алғашқы дыбыс', icon:'🔠', bg:'#ffccbc', sub:'Сөз қай әріптен басталады?',
+  make:()=>pick(Object.keys(EMO),N_TASKS),
+  render(w,st,done){
+    st.append(el('div','task-title','Сөз қай әріптен басталады?'));
+    st.append(el('div','pic',EMO[w]));
+    const fw=el('div','firstw'),blank=el('span','blank drop','');fw.append(blank,el('span','',w.slice(1)));st.append(fw);
+    const opts=new Set([w[0]]);while(opts.size<3)opts.add(LETTERS[rnd(0,LETTERS.length-1)]);
+    const tiles=el('div','tiles');
+    shuffle([...opts]).forEach(L=>{const b=el('button','tile',L);
+      const put=()=>{if(L!==w[0])return wrong(b);blank.textContent=L;blank.className='blank filled';popIn(blank);b.classList.add('used');done()};
+      dragTile(b,put,put);tiles.append(b)});
+    st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
+  }},
+sortGame({ id:'cons', title:'Қатаң, ұяң, үнді', icon:'🧺', bg:'#e1bee7', sub:'Дауыссыздарды сұрыпта',
+  q:'Дауыссыз дыбыстарды себетке сал', n:6, per:2, pool:CONS,
+  bins:[{k:'k',label:'Қатаң',color:'#e53935'},{k:'u',label:'Ұяң',color:'#fb8c00'},{k:'n',label:'Үнді',color:'#43a047'}]}),
+sortGame({ id:'hardsoft', title:'Жуан ба, жіңішке ме?', icon:'🐘', bg:'#b3e5fc', sub:'Сөздерді сұрыпта', wide:true,
+  q:'Сөз жуан ба, жіңішке ме?', n:6, per:2, pool:HARDSOFT,
+  bins:[{k:'h',label:'Жуан',color:'#1565c0'},{k:'s',label:'Жіңішке',color:'#d81b60'}]}),
+{ id:'units', title:'Шамаларды өрнектеу', icon:'📐', bg:'#cfd8dc', sub:'м², дм², см², мм² · м³, дм³, см³, мм³',
+  make(){const A=[['м²','дм²',100],['дм²','см²',100],['см²','мм²',100],['м²','см²',10000]],V=[['м³','дм³',1000],['дм³','см³',1000],['см³','мм³',1000]];
+    return Array.from({length:25},(_,i)=>{const P=(i%2?V:A)[rnd(0,(i%2?V:A).length-1)],[big,small,f]=P,n=rnd(2,9),ty=rnd(0,2);
+      if(ty===0)return{q:[n,big],to:small,ans:n*f,bad:[n*f*10,n*f/10,n*10]};
+      if(ty===1)return{q:[n*f,small],to:big,ans:n,bad:[n*10,n*100,n*f/10]};
+      const b=rnd(1,f-1);return{q:[n,big,b,small],to:small,ans:n*f+b,bad:[n*f/10+b,n*f*10+b,n*10+b]}})},
+  render(t,st,done){
+    st.append(el('div','task-title','Шамаларды өрнекте'));
+    const N=v=>v.toLocaleString('ru-RU');
+    const box=el('div','box drop wide',''),eq=el('div','eq conv');
+    const left=t.q.length===2?`${N(t.q[0])} ${t.q[1]}`:`${N(t.q[0])} ${t.q[1]} ${N(t.q[2])} ${t.q[3]}`;
+    eq.append(el('span','',left+' ='),box,el('span','',t.to));st.append(eq);
+    const opts=[t.ans];t.bad.forEach(v=>{if(Number.isInteger(v)&&v>0&&!opts.includes(v)&&opts.length<3)opts.push(v)});
+    const tiles=el('div','tiles');
+    shuffle(opts).forEach(v=>{const b=el('button','tile wide',N(v));
+      const put=()=>{if(v!==t.ans)return wrong(b);box.textContent=N(v);box.className='box filled wide';popIn(box);b.classList.add('used');done()};
+      dragTile(b,put,put);tiles.append(b)});
+    st.append(tiles,el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
+  }},
+{ id:'duel', title:'Жарыс: қосу, азайту', icon:'🏁', bg:'#ffe082', sub:'Екі оқушы жарысады', noProgress:true,
+  make:()=>[0],
+  render(_,st,done,alive){
+    st.append(el('div','task-title','Екі оқушы жарысы!<br>Кім бірінші шешеді?'));
+    const go=el('button','bigbtn green','БАСТАУ 🚀');st.append(go);
+    go.onclick=()=>{st.innerHTML='';const wrap=el('div','duel');st.append(wrap);
+      const res=[null,null],t0=performance.now();let iv;
+      const mk=()=>{let a=rnd(1,9),b=rnd(1,9);const op=Math.random()<.5?'+':'−';if(op==='−'&&b>a)[a,b]=[b,a];return{a,b,op,ans:op==='+'?a+b:a-b}};
+      const check=()=>{if(res[0]==null||res[1]==null)return;clearInterval(iv);const w=res[0]<res[1]?0:res[1]<res[0]?1:-1;
+        setTimeout(()=>alive()&&done(`1-оқушы: ${fmt(res[0])} сек<br>2-оқушы: ${fmt(res[1])} сек<br>${w<0?'🤝 Тең түсті!':'🏆 '+(w+1)+'-оқушы жеңді!'}`),1000)};
+      const sides=[0,1].map(si=>{const tasks=Array.from({length:N_TASKS},mk);let k=0;
+        const side=el('div','side s'+si,`<div class="shead">${si+1}-оқушы</div><div class="sclock">0.0</div><div class="sdots"></div><div class="seq"></div><div class="tiles stiles"></div>`);wrap.append(side);
+        const dots=side.querySelector('.sdots'),eq=side.querySelector('.seq'),tl=side.querySelector('.stiles'),clk=side.querySelector('.sclock');
+        const draw=()=>{dots.innerHTML='';tasks.forEach((_,i)=>dots.append(el('i',i<k?'done':i===k?'cur':'')));
+          if(k>=tasks.length){res[si]=(performance.now()-t0)/1000;clk.textContent=fmt(res[si]);eq.innerHTML=`<div class="sdone">✅ ${fmt(res[si])} сек</div>`;tl.innerHTML='';beep('good');check();return}
+          const q=tasks[k],box=el('div','box drop','');eq.innerHTML='';eq.append(el('span','',`${q.a} ${q.op} ${q.b} =`),box);tl.innerHTML='';
+          options(q.ans,3,0,18).forEach(v=>{const b=el('button','tile',v);
+            const put=()=>{if(v!==q.ans)return wrong(b);beep('tap');box.textContent=v;box.className='box filled';popIn(box);b.classList.add('used');k++;setTimeout(()=>alive()&&draw(),350)};
+            dragTile(b,put,d=>{if(d===box)put()});tl.append(b)})};
+        draw();return{clk,si}});
+      iv=setInterval(()=>{if(!alive())return clearInterval(iv);const t=(performance.now()-t0)/1000;sides.forEach(x=>{if(res[x.si]==null)x.clk.textContent=fmt(t)})},100)};
+  }},
+];
+
+/* pyramid helpers: 0=1+2, 1=3+4, 2=4+5 */
+const REL=[[0,1,2],[1,3,4],[2,4,5]];
+function solvable(hid){const unk=new Set(hid);let ch=true;while(ch&&unk.size){ch=false;for(const r of REL){const u=r.filter(i=>unk.has(i));if(u.length===1){unk.delete(u[0]);ch=true}}}return unk.size===0}
+function canSolve(i,hid){return REL.some(r=>r.includes(i)&&r.filter(j=>hid.includes(j)).length===1)}
+
+/* ---------- engine ---------- */
+const S={game:null,tasks:[],i:0};let token=0;
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id))}
+function drawProgress(){const p=$('#progress');p.innerHTML='';if(S.game.noProgress)return;S.tasks.forEach((_,i)=>p.append(el('i',i<S.i?'done':i===S.i?'cur':'')))}
+function startGame(g){stopConfetti();S.game=g;S.tasks=g.make();S.i=0;$('#gtitle').textContent=g.title;$('#final').classList.remove('show');show('game');renderTask()}
+function renderTask(){const my=++token;drawProgress();const st=$('#stage');st.innerHTML='';
+  S.game.render(S.tasks[S.i],st,msg=>{if(my!==token)return;token++;
+    if(S.game.noProgress)return finish(msg);
+    beep('good');flash('Дұрыс! 👍');setTimeout(()=>{if(token!==my+1)return;S.i++;S.i>=S.tasks.length?finish():renderTask()},1300)},
+    ()=>my===token)}
+function finish(msg){S.i=S.tasks.length;drawProgress();$('#fmsg').innerHTML=msg||'Барлық тапсырма орындалды!';$('#final').classList.add('show');beep('win');confetti()}
+function restart(){startGame(S.game)}
+function goHome(){token++;stopConfetti();$('#final').classList.remove('show');show('home')}
+function toggleFS(){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()}
+
+/* home grid */
+GAMES.forEach(g=>{const c=el('button','gcard',`<div class="ic" style="background:${g.bg}">${g.icon}</div><div class="t">${g.title}</div><div class="s">${g.sub}</div>`);c.onclick=()=>{beep('tap');startGame(g)};$('#grid').append(c)});
+</script>
+</body>
+</html>
