@@ -491,7 +491,7 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
     st.append(el('div','eqcard',t.txt.replace('х','<b class="xv">х</b>')));
     const box=el('div','box drop',''),row=el('div','eq');row.append(el('span','','<b class="xv">х</b> ='),box);st.append(row);
     const tiles=el('div','tiles');
-    options(t.ans,3,0,20).forEach(v=>{const b=el('button','tile',v);
+    t.opts.forEach(v=>{const b=el('button','tile',v);
       const put=()=>{if(v!==t.ans)return wrong(b);box.textContent=v;box.className='box filled';popIn(box);b.classList.add('used');done()};
       dragTile(b,put,put);tiles.append(b)});
     st.append(tiles,el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
@@ -540,10 +540,14 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
 
 /* теңдеу: 20 көлемінде */
 function eqTask(){const k=rnd(0,3);let a,b,c,txt,ans;
-  if(k<2){a=rnd(1,15);b=rnd(1,20-a);c=a+b;ans=a;txt=k===0?`х + ${b} = ${c}`:`${b} + х = ${c}`}
-  else if(k===2){c=rnd(1,15);b=rnd(1,20-c);ans=c+b;txt=`х − ${b} = ${c}`}
-  else{a=rnd(5,20);ans=rnd(1,a-1);txt=`${a} − х = ${a-ans}`}
-  return{txt,ans}}
+  let trap;
+  if(k<2){a=rnd(1,15);b=rnd(1,20-a);c=a+b;ans=a;trap=c+b;txt=k===0?`х + ${b} = ${c}`:`${b} + х = ${c}`}
+  else if(k===2){c=rnd(1,15);b=rnd(1,20-c);ans=c+b;trap=Math.abs(c-b);txt=`х − ${b} = ${c}`}
+  else{a=rnd(5,20);ans=rnd(1,a-1);c=a-ans;trap=a+c;txt=`${a} − х = ${c}`}
+  /* қате амал (қосудың орнына азайту, т.б.) нұсқасы + жақын сан */
+  const opts=[ans];if(trap!==ans)opts.push(trap);
+  let g=0;while(opts.length<3&&g++<50){const v=ans+(Math.random()<.5?-1:1)*rnd(1,2);if(v>=0&&!opts.includes(v))opts.push(v)}
+  return{txt,ans,opts:shuffle(opts)}}
 const TRAIN_WORDS=['Ата','Арна','Алу','Аула','Таза','Сана','Салу','Азық','Қазы','Қасық','Сан','Тау','Қозы','Мата','Мықты','Тамыз','Тамақ','Қамыс'];
 const LOCO=`<svg class="loco" viewBox="0 0 220 170"><rect x="0" y="40" width="80" height="90" rx="8" fill="#1e3a8a"/><rect x="12" y="52" width="56" height="40" rx="6" fill="#bfdbfe"/>
 <rect x="70" y="70" width="120" height="60" rx="26" fill="#2563eb"/><rect x="120" y="30" width="26" height="44" fill="#1e293b"/><rect x="112" y="22" width="42" height="14" rx="4" fill="#334155"/>
