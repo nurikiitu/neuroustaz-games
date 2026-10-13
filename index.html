@@ -97,6 +97,21 @@ button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation;
 .gname{color:#fff;font-size:clamp(36px,4vw,56px);font-weight:900;text-shadow:0 4px 0 rgba(0,0,0,.2)}
 .soon{grid-column:1/-1;text-align:center;color:#fff;font-size:40px;font-weight:900;padding:60px}
 @media (max-width:900px){.grades{grid-template-columns:repeat(2,1fr)}}
+.eqcard{background:#fff;border-radius:30px;padding:24px 60px;font-size:clamp(80px,8vw,130px);font-weight:900;color:var(--ink);box-shadow:0 10px 0 rgba(0,0,0,.15)}
+.xv{color:var(--red);font-style:italic}
+.eq .xv{color:var(--yellow)}
+.tscene{position:relative;width:100%;flex:1;min-height:520px;border-radius:30px;overflow:hidden;background:linear-gradient(#7dd3fc 0%,#bae6fd 55%,#fde68a 55%,#fcd34d 100%);box-shadow:inset 0 0 0 6px rgba(255,255,255,.6)}
+.tscene .sun{position:absolute;right:6%;top:6%;font-size:90px}
+.tscene .cl{position:absolute;font-size:110px;opacity:.9}.tscene .c1{left:10%;top:6%}.tscene .c2{left:48%;top:14%;font-size:80px}
+.tscene .hills{position:absolute;left:0;right:0;bottom:30%;height:22%;background:radial-gradient(ellipse at 20% 100%,#86efac 40%,transparent 41%),radial-gradient(ellipse at 70% 100%,#4ade80 45%,transparent 46%)}
+.tscene .rails{position:absolute;left:0;right:0;bottom:12%;height:22px;background:repeating-linear-gradient(90deg,#78350f 0 18px,transparent 18px 46px),linear-gradient(transparent 7px,#57534e 7px 11px,transparent 11px)}
+.train{position:absolute;left:0;bottom:calc(12% + 10px);display:flex;align-items:flex-end;will-change:transform}
+.wagon{position:relative;background:#2563eb;border:8px solid #1e3a8a;border-radius:18px;padding:22px 48px 44px;min-width:360px;text-align:center}
+.wagon span{display:block;background:#fff;border-radius:14px;padding:6px 30px;font-size:clamp(70px,7vw,120px);font-weight:900;color:var(--red);line-height:1.1}
+.wagon i{position:absolute;bottom:-34px;width:56px;height:56px;border-radius:50%;background:#111827;border:10px solid #9ca3af}
+.wagon i:nth-of-type(1){left:40px}.wagon i:nth-of-type(2){right:40px}
+.link{width:30px;height:12px;background:#1e293b;margin-bottom:40px}
+.loco{width:300px;height:auto;margin-bottom:-24px}
 .hrow.active .hc.empty{border:5px solid var(--yellow);box-shadow:0 0 0 7px rgba(253,216,53,.55)}
 
 /* ten */
@@ -469,6 +484,36 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
       dragTile(b,put,put);tiles.append(b)});
     st.append(tiles,el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
   }},
+{ id:'eq', grade:2, title:'Теңдеу', icon:'❎', bg:'#c5cae9', sub:'х-ті тап: х + 5 = 10',
+  make:()=>Array.from({length:10},()=>eqTask()),
+  render(t,st,done){
+    st.append(el('div','task-title','Теңдеуді шеш'));
+    st.append(el('div','eqcard',t.txt.replace('х','<b class="xv">х</b>')));
+    const box=el('div','box drop',''),row=el('div','eq');row.append(el('span','','<b class="xv">х</b> ='),box);st.append(row);
+    const tiles=el('div','tiles');
+    options(t.ans,3,0,20).forEach(v=>{const b=el('button','tile',v);
+      const put=()=>{if(v!==t.ans)return wrong(b);box.textContent=v;box.className='box filled';popIn(box);b.classList.add('used');done()};
+      dragTile(b,put,put);tiles.append(b)});
+    st.append(tiles,el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
+  }},
+{ id:'train', grade:1, title:'Сөз пойызы', icon:'🚂', bg:'#ffe0b2', sub:'Пойыздағы сөзді оқы', noProgress:true,
+  make:()=>[0],
+  render(_,st,done,alive){
+    st.append(el('div','task-title','Пойыз сөздерді алып келеді.<br>Сөзді оқып үлгер!'));
+    const go=el('button','bigbtn green','БАСТАУ 🚀');st.append(go);
+    go.onclick=()=>{st.innerHTML='';const words=shuffle(TRAIN_WORDS);let i=0,anim=null,paused=false;
+      const cnt=el('div','counter',''),scene=el('div','tscene','<div class="sun">☀️</div><div class="cl c1">☁️</div><div class="cl c2">☁️</div><div class="hills"></div><div class="rails"></div>');
+      const pb=el('button','tbtn','⏸ Тоқтату');
+      st.append(cnt,scene,pb);
+      pb.onclick=()=>{if(!anim)return;paused=!paused;paused?anim.pause():anim.play();pb.textContent=paused?'▶ Жалғастыру':'⏸ Тоқтату'};
+      const next=()=>{if(!alive())return;if(i>=words.length)return done(`Сен ${words.length} сөз оқыдың! 🚂`);
+        cnt.textContent=`${i+1} / ${words.length}`;
+        const tr=el('div','train',`<div class="wagon"><span>${words[i]}</span><i></i><i></i></div><div class="link"></div>${LOCO}`);
+        scene.append(tr);const W=scene.clientWidth,w=tr.offsetWidth;
+        anim=tr.animate([{transform:`translateX(${-w}px)`},{transform:`translateX(${W}px)`}],{duration:5000,easing:'linear'});
+        anim.onfinish=()=>{tr.remove();i++;next()}};
+      next()};
+  }},
 ...[1,2].map(LV=>({ id:'duel'+LV, title:'Жарыс: қосу, азайту · '+LV+'-деңгей', icon:LV===1?'🏁':'🏆', bg:LV===1?'#ffe082':'#ffcc80', sub:LV===1?'10 көлеміндегі сандар':'20 көлеміндегі сандар', grade:LV, noProgress:true,
   make:()=>[0],
   render(_,st,done,alive){
@@ -492,6 +537,19 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
       iv=setInterval(()=>{if(!alive())return clearInterval(iv);const t=(performance.now()-t0)/1000;sides.forEach(x=>{if(res[x.si]==null)x.clk.textContent=fmt(t)})},100)};
   }})),
 ];
+
+/* теңдеу: 20 көлемінде */
+function eqTask(){const k=rnd(0,3);let a,b,c,txt,ans;
+  if(k<2){a=rnd(1,15);b=rnd(1,20-a);c=a+b;ans=a;txt=k===0?`х + ${b} = ${c}`:`${b} + х = ${c}`}
+  else if(k===2){c=rnd(1,15);b=rnd(1,20-c);ans=c+b;txt=`х − ${b} = ${c}`}
+  else{a=rnd(5,20);ans=rnd(1,a-1);txt=`${a} − х = ${a-ans}`}
+  return{txt,ans}}
+const TRAIN_WORDS=['Ата','Арна','Алу','Аула','Таза','Сана','Салу','Азық','Қазы','Қасық','Сан','Тау','Қозы','Мата','Мықты','Тамыз','Тамақ','Қамыс'];
+const LOCO=`<svg class="loco" viewBox="0 0 220 170"><rect x="0" y="40" width="80" height="90" rx="8" fill="#1e3a8a"/><rect x="12" y="52" width="56" height="40" rx="6" fill="#bfdbfe"/>
+<rect x="70" y="70" width="120" height="60" rx="26" fill="#2563eb"/><rect x="120" y="30" width="26" height="44" fill="#1e293b"/><rect x="112" y="22" width="42" height="14" rx="4" fill="#334155"/>
+<path d="M190 120 L220 135 L190 135Z" fill="#dc2626"/><rect x="186" y="80" width="14" height="14" rx="3" fill="#fde047"/><rect x="-6" y="34" width="92" height="12" rx="4" fill="#dc2626"/>
+<circle cx="40" cy="138" r="24" fill="#111827"/><circle cx="40" cy="138" r="10" fill="#9ca3af"/><circle cx="120" cy="145" r="17" fill="#111827"/><circle cx="160" cy="145" r="17" fill="#111827"/>
+<circle cx="120" cy="145" r="7" fill="#9ca3af"/><circle cx="160" cy="145" r="7" fill="#9ca3af"/></svg>`;
 
 /* duel tasks: 1-деңгей — 10 көлемінде, 2-деңгей — 11..20 */
 function duelTask(LV){let a,b,op;
