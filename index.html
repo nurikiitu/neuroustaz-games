@@ -86,6 +86,17 @@ button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation;
 .tile.wide{font-size:48px}
 .eq.conv{font-size:clamp(56px,5vw,84px);flex-wrap:wrap;justify-content:center}
 .box.wide{width:auto;min-width:220px;padding:0 20px;font-size:.85em}
+.grades{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;padding:40px clamp(16px,4vw,80px);max-width:1600px;margin:0 auto;width:100%}
+.gradecard{border-radius:36px;padding:34px 10px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 10px 0 rgba(0,0,0,.22);border:6px solid rgba(255,255,255,.85)}
+.gradecard:active{transform:translateY(8px);box-shadow:0 2px 0 rgba(0,0,0,.22)}
+.gradecard .gn{font-size:clamp(90px,10vw,160px);font-weight:900;line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.2)}
+.gradecard .gt{font-size:clamp(30px,3vw,46px);font-weight:900;letter-spacing:2px}
+.gradecard .gc{font-size:24px;font-weight:800;background:rgba(0,0,0,.18);padding:4px 18px;border-radius:14px;margin-top:6px}
+.gradebar{display:flex;align-items:center;justify-content:space-between;padding:10px clamp(16px,4vw,64px) 0;max-width:1600px;margin:0 auto;width:100%}
+.gradebar span{width:200px}
+.gname{color:#fff;font-size:clamp(36px,4vw,56px);font-weight:900;text-shadow:0 4px 0 rgba(0,0,0,.2)}
+.soon{grid-column:1/-1;text-align:center;color:#fff;font-size:40px;font-weight:900;padding:60px}
+@media (max-width:900px){.grades{grid-template-columns:repeat(2,1fr)}}
 .hrow.active .hc.empty{border:5px solid var(--yellow);box-shadow:0 0 0 7px rgba(253,216,53,.55)}
 
 /* ten */
@@ -169,6 +180,8 @@ button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation;
     <p>Ойнап үйренеміз!</p>
     <button class="tbtn fs-btn" onclick="toggleFS()">⛶ Толық экран</button>
   </div>
+  <div class="grades" id="grades"></div>
+  <div class="gradebar" id="gradebar" style="display:none"><button class="tbtn" onclick="showGrades()">⬅ Сыныптар</button><div class="gname" id="gname"></div><span></span></div>
   <div class="grid" id="grid"></div>
 </section>
 
@@ -285,7 +298,7 @@ function sortGame(c){return{...c,
 
 /* ---------- games ---------- */
 const GAMES=[
-{ id:'house', title:'Санның құрамы', icon:'🏠', bg:'#ffcdd2', sub:'Үйшіктегі бос орынды толтыр',
+{ id:'house', grade:1, title:'Санның құрамы', icon:'🏠', bg:'#ffcdd2', sub:'Үйшіктегі бос орынды толтыр',
   make:()=>shuffle([5,6,7,8,9,10]),
   render(N,st,done){
     st.append(el('div','task-title','Үйшікті толтыр'));
@@ -306,7 +319,7 @@ const GAMES=[
       tiles.append(t)});
     st.append(tiles);
   }},
-{ id:'ten', title:'10 саны қалай алынды?', icon:'🔟', bg:'#bbdefb', sub:'Жетпейтін санды тап',
+{ id:'ten', grade:1, title:'10 саны қалай алынды?', icon:'🔟', bg:'#bbdefb', sub:'Жетпейтін санды тап',
   make:()=>pick([1,2,3,4,5,6,7,8,9],N_TASKS).map(b=>({a:10-b,b,miss:Math.random()<.5?'a':'b'})),
   render(t,st,done){
     st.append(el('div','task-title','10 саны қалай алынды?'));
@@ -320,7 +333,7 @@ const GAMES=[
       dragTile(b,put,put);tiles.append(b)});
     st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
   }},
-{ id:'build', title:'Сөз құрастыр', icon:'🔤', bg:'#d1c4e9', sub:'Әріптерден сөз құра',
+{ id:'build', grade:1, title:'Сөз құрастыр', icon:'🔤', bg:'#d1c4e9', sub:'Әріптерден сөз құра',
   make:()=>shuffle([...BUILD_MAIN,...pick(BUILD_EXTRA,5)]),
   render(w,st,done){
     st.append(el('div','task-title','Суретке қарап, сөзді құра'));
@@ -337,7 +350,7 @@ const GAMES=[
       tiles.append(b)});
     st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
   }},
-{ id:'pyramid', title:'Математикалық пирамида', icon:'🔺', bg:'#c8e6c9', sub:'Бос дөңгелектерді толтыр',
+{ id:'pyramid', grade:2, title:'Математикалық пирамида', icon:'🔺', bg:'#c8e6c9', sub:'Бос дөңгелектерді толтыр',
   make(){const out=[];while(out.length<N_TASKS){const b=[rnd(10,24),rnd(10,24),rnd(10,24)],m=[b[0]+b[1],b[1]+b[2]],vals=[m[0]+m[1],m[0],m[1],b[0],b[1],b[2]];
     const hid=pick([0,1,2,3,4,5],3);if(solvable(hid))out.push({vals,hid})}return out},
   render(t,st,done){
@@ -360,7 +373,7 @@ const GAMES=[
       tiles.append(b)});
     st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
   }},
-{ id:'minute', title:'1 минутта оқы', icon:'⏱️', bg:'#fff9c4', sub:'Мәтінді 1 минутта оқып шық', noProgress:true,
+{ id:'minute', grade:2, title:'1 минутта оқы', icon:'⏱️', bg:'#fff9c4', sub:'Мәтінді 1 минутта оқып шық', noProgress:true,
   make:()=>[0],
   render(_,st,done,alive){
     st.append(el('div','task-title','Мәтінді 1 минут ішінде оқып шық!'));
@@ -374,7 +387,7 @@ const GAMES=[
       fin.onclick=()=>stop(`Сен мәтінді ${Math.round((performance.now()-t0)/1000)} секундта оқыдың!`);
       iv=setInterval(()=>{if(!alive())return clearInterval(iv);const left=Math.max(0,60-(performance.now()-t0)/1000);bar.style.width=(left/60*100)+'%';clk.textContent=Math.ceil(left);if(left<=0)stop('Уақыт бітті! ⏰')},200)};
   }},
-{ id:'scheme', title:'Сөздің сызбасы', icon:'🔴', bg:'#f8bbd0', sub:'Дауысты – қызыл, дауыссыз – көк',
+{ id:'scheme', grade:1, title:'Сөздің сызбасы', icon:'🔴', bg:'#f8bbd0', sub:'Дауысты – қызыл, дауыссыз – көк',
   make:()=>pick(SCHEME,10),
   render(w,st,done){
     st.append(el('div','task-title',`«${w}» сөзінің сызбасын жаса`));
@@ -393,7 +406,7 @@ const GAMES=[
       r.append(b)});
     st.append(r);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
   }},
-{ id:'count', title:'Санап шық', icon:'🍎', bg:'#dcedc8', sub:'Заттарды сана',
+{ id:'count', grade:1, title:'Санап шық', icon:'🍎', bg:'#dcedc8', sub:'Заттарды сана',
   make:()=>pick([1,2,3,4,5,6,7,8,9,10],N_TASKS).map(n=>({n,o:OBJ[rnd(0,OBJ.length-1)]})),
   render(t,st,done){
     st.append(el('div','task-title','Нешеу?'));
@@ -405,7 +418,7 @@ const GAMES=[
       dragTile(b,put,put);tiles.append(b)});
     st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
   }},
-{ id:'compare', title:'Салыстыр', icon:'⚖️', bg:'#b2ebf2', sub:'Қай жақта көп?',
+{ id:'compare', grade:1, title:'Салыстыр', icon:'⚖️', bg:'#b2ebf2', sub:'Қай жақта көп?',
   make:()=>Array.from({length:N_TASKS},(_,i)=>{const a=rnd(1,9);const b=i%4===3?a:rnd(1,9);return{a,b,o:OBJ[rnd(0,OBJ.length-1)]}}),
   render(t,st,done){
     st.append(el('div','task-title','Салыстыр: &gt; &lt; ='));
@@ -418,7 +431,7 @@ const GAMES=[
       dragTile(b,put,put);tiles.append(b)});
     st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
   }},
-{ id:'first', title:'Алғашқы дыбыс', icon:'🔠', bg:'#ffccbc', sub:'Сөз қай әріптен басталады?',
+{ id:'first', grade:1, title:'Алғашқы дыбыс', icon:'🔠', bg:'#ffccbc', sub:'Сөз қай әріптен басталады?',
   make:()=>pick(Object.keys(EMO),N_TASKS),
   render(w,st,done){
     st.append(el('div','task-title','Сөз қай әріптен басталады?'));
@@ -431,13 +444,13 @@ const GAMES=[
       dragTile(b,put,put);tiles.append(b)});
     st.append(tiles);st.append(el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
   }},
-sortGame({ id:'cons', title:'Қатаң, ұяң, үнді', icon:'🧺', bg:'#e1bee7', sub:'Дауыссыздарды сұрыпта',
+sortGame({ id:'cons', grade:2, title:'Қатаң, ұяң, үнді', icon:'🧺', bg:'#e1bee7', sub:'Дауыссыздарды сұрыпта',
   q:'Дауыссыз дыбыстарды себетке сал', n:6, per:2, pool:CONS,
   bins:[{k:'k',label:'Қатаң',color:'#e53935'},{k:'u',label:'Ұяң',color:'#fb8c00'},{k:'n',label:'Үнді',color:'#43a047'}]}),
-sortGame({ id:'hardsoft', title:'Жуан ба, жіңішке ме?', icon:'🐘', bg:'#b3e5fc', sub:'Сөздерді сұрыпта', wide:true,
+sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', icon:'🐘', bg:'#b3e5fc', sub:'Сөздерді сұрыпта', wide:true,
   q:'Сөз жуан ба, жіңішке ме?', n:6, per:2, pool:HARDSOFT,
   bins:[{k:'h',label:'Жуан',color:'#1565c0'},{k:'s',label:'Жіңішке',color:'#d81b60'}]}),
-{ id:'units', title:'Шамаларды өрнектеу', icon:'📐', bg:'#cfd8dc', sub:'м², дм², см², мм² · м³, дм³, см³, мм³',
+{ id:'units', grade:4, title:'Шамаларды өрнектеу', icon:'📐', bg:'#cfd8dc', sub:'м², дм², см², мм² · м³, дм³, см³, мм³',
   make(){const A=[['м²','дм²',100],['дм²','см²',100],['см²','мм²',100],['м²','см²',10000]],V=[['м³','дм³',1000],['дм³','см³',1000],['см³','мм³',1000]];
     return Array.from({length:25},(_,i)=>{const P=(i%2?V:A)[rnd(0,(i%2?V:A).length-1)],[big,small,f]=P,n=rnd(2,9),ty=rnd(0,2);
       if(ty===0)return{q:[n,big],to:small,ans:n*f,bad:[n*f*10,n*f/10,n*10]};
@@ -456,14 +469,14 @@ sortGame({ id:'hardsoft', title:'Жуан ба, жіңішке ме?', icon:'�
       dragTile(b,put,put);tiles.append(b)});
     st.append(tiles,el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
   }},
-{ id:'duel', title:'Жарыс: қосу, азайту', icon:'🏁', bg:'#ffe082', sub:'Екі оқушы жарысады', noProgress:true,
+...[1,2].map(LV=>({ id:'duel'+LV, title:'Жарыс: қосу, азайту · '+LV+'-деңгей', icon:LV===1?'🏁':'🏆', bg:LV===1?'#ffe082':'#ffcc80', sub:LV===1?'10 көлеміндегі сандар':'20 көлеміндегі сандар', grade:LV, noProgress:true,
   make:()=>[0],
   render(_,st,done,alive){
     st.append(el('div','task-title','Екі оқушы жарысы!<br>Кім бірінші шешеді?'));
     const go=el('button','bigbtn green','БАСТАУ 🚀');st.append(go);
     go.onclick=()=>{st.innerHTML='';const wrap=el('div','duel');st.append(wrap);
       const res=[null,null],t0=performance.now();let iv;
-      const mk=()=>{let a=rnd(1,9),b=rnd(1,9);const op=Math.random()<.5?'+':'−';if(op==='−'&&b>a)[a,b]=[b,a];return{a,b,op,ans:op==='+'?a+b:a-b}};
+      const mk=()=>duelTask(LV);
       const check=()=>{if(res[0]==null||res[1]==null)return;clearInterval(iv);const w=res[0]<res[1]?0:res[1]<res[0]?1:-1;
         setTimeout(()=>alive()&&done(`1-оқушы: ${fmt(res[0])} сек<br>2-оқушы: ${fmt(res[1])} сек<br>${w<0?'🤝 Тең түсті!':'🏆 '+(w+1)+'-оқушы жеңді!'}`),1000)};
       const sides=[0,1].map(si=>{const tasks=Array.from({length:N_TASKS},mk);let k=0;
@@ -472,13 +485,20 @@ sortGame({ id:'hardsoft', title:'Жуан ба, жіңішке ме?', icon:'�
         const draw=()=>{dots.innerHTML='';tasks.forEach((_,i)=>dots.append(el('i',i<k?'done':i===k?'cur':'')));
           if(k>=tasks.length){res[si]=(performance.now()-t0)/1000;clk.textContent=fmt(res[si]);eq.innerHTML=`<div class="sdone">✅ ${fmt(res[si])} сек</div>`;tl.innerHTML='';beep('good');check();return}
           const q=tasks[k],box=el('div','box drop','');eq.innerHTML='';eq.append(el('span','',`${q.a} ${q.op} ${q.b} =`),box);tl.innerHTML='';
-          options(q.ans,3,0,18).forEach(v=>{const b=el('button','tile',v);
+          options(q.ans,3,0,LV===1?10:20).forEach(v=>{const b=el('button','tile',v);
             const put=()=>{if(v!==q.ans)return wrong(b);beep('tap');box.textContent=v;box.className='box filled';popIn(box);b.classList.add('used');k++;setTimeout(()=>alive()&&draw(),350)};
             dragTile(b,put,d=>{if(d===box)put()});tl.append(b)})};
         draw();return{clk,si}});
       iv=setInterval(()=>{if(!alive())return clearInterval(iv);const t=(performance.now()-t0)/1000;sides.forEach(x=>{if(res[x.si]==null)x.clk.textContent=fmt(t)})},100)};
-  }},
+  }})),
 ];
+
+/* duel tasks: 1-деңгей — 10 көлемінде, 2-деңгей — 11..20 */
+function duelTask(LV){let a,b,op;
+  if(LV===1){if(Math.random()<.5){op='+';a=rnd(1,9);b=rnd(1,10-a)}else{op='−';a=rnd(2,10);b=rnd(1,a-1)}}
+  else{if(Math.random()<.5){op='+';const sum=rnd(11,20);a=rnd(Math.max(1,sum-10),Math.min(13,sum-1));b=sum-a}
+       else{op='−';a=rnd(11,20);b=rnd(1,10)}}
+  return{a,b,op,ans:op==='+'?a+b:a-b}}
 
 /* pyramid helpers: 0=1+2, 1=3+4, 2=4+5 */
 const REL=[[0,1,2],[1,3,4],[2,4,5]];
@@ -497,11 +517,20 @@ function renderTask(){const my=++token;drawProgress();const st=$('#stage');st.in
     ()=>my===token)}
 function finish(msg){S.i=S.tasks.length;drawProgress();$('#fmsg').innerHTML=msg||'Барлық тапсырма орындалды!';$('#final').classList.add('show');beep('win');confetti()}
 function restart(){startGame(S.game)}
-function goHome(){token++;stopConfetti();$('#final').classList.remove('show');show('home')}
+function goHome(){token++;stopConfetti();$('#final').classList.remove('show');show('home');if(S.game&&S.game.grade)openGrade(S.game.grade)}
 function toggleFS(){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()}
 
-/* home grid */
-GAMES.forEach(g=>{const c=el('button','gcard',`<div class="ic" style="background:${g.bg}">${g.icon}</div><div class="t">${g.title}</div><div class="s">${g.sub}</div>`);c.onclick=()=>{beep('tap');startGame(g)};$('#grid').append(c)});
+/* home: сыныптар */
+const GRADES=[{n:1,c:'#ef5350'},{n:2,c:'#ffa726'},{n:3,c:'#66bb6a'},{n:4,c:'#ab47bc'}];
+let curGrade=null;
+function showGrades(){curGrade=null;$('#grades').style.display='';$('#gradebar').style.display='none';$('#grid').innerHTML=''}
+function openGrade(n){curGrade=n;$('#grades').style.display='none';$('#gradebar').style.display='flex';$('#gname').textContent=n+'-СЫНЫП';
+  const grid=$('#grid');grid.innerHTML='';const list=GAMES.filter(g=>g.grade===n);
+  if(!list.length)grid.append(el('div','soon','🛠 Жақында ойындар қосылады!'));
+  list.forEach(g=>{const c=el('button','gcard',`<div class="ic" style="background:${g.bg}">${g.icon}</div><div class="t">${g.title}</div><div class="s">${g.sub}</div>`);c.onclick=()=>{beep('tap');startGame(g)};grid.append(c)})}
+GRADES.forEach(G=>{const k=GAMES.filter(g=>g.grade===G.n).length;
+  const b=el('button','gradecard',`<div class="gn">${G.n}</div><div class="gt">СЫНЫП</div><div class="gc">${k?k+' ойын':'жақында'}</div>`);
+  b.style.background=G.c;b.onclick=()=>{beep('tap');openGrade(G.n)};$('#grades').append(b)});
 </script>
 </body>
 </html>
