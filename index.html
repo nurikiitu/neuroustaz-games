@@ -130,6 +130,7 @@ button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation;
 .webox h3{font-size:40px}.webox p{font-size:22px;font-weight:700;opacity:.7}
 .webox textarea{width:100%;height:260px;font:800 32px 'Nunito',sans-serif;border:4px solid #bcd;border-radius:18px;padding:14px;user-select:text;-webkit-user-select:text}
 .webox .tbtn.ok{background:var(--green);color:#fff}
+.slot.filled.got{color:var(--green)}
 .hrow.active .hc.empty{border:5px solid var(--yellow);box-shadow:0 0 0 7px rgba(253,216,53,.55)}
 
 /* ten */
@@ -502,6 +503,21 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
       dragTile(b,put,put);tiles.append(b)});
     st.append(tiles,el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
   }},
+{ id:'missing', grade:1, title:'Жоғалған әріптер', icon:'🔍', bg:'#fff59d', sub:'Сөзге жетпейтін әріпті тап',
+  make:()=>shuffle(MISSING_WORDS).map(w=>{const i=rnd(0,w.length-1),L=w[i],pool=(VOWELS.includes(L)?'АӘЕОӨҰҮЫІ':'БДЖЗКҚЛМНПРСТШ').split('').filter(x=>x!==L);
+    return{w,i,L,opts:shuffle([L,...pick(pool,2)])}}),
+  render(t,st,done){
+    st.append(el('div','task-title','Жоғалған әріпті тап'));
+    if(MISS_EMO[t.w])st.append(el('div','pic',MISS_EMO[t.w]));
+    const row=el('div','slots');let hole;
+    [...t.w].forEach((L,j)=>{const c=el('div',j===t.i?'slot drop next':'slot filled',j===t.i?'':L);if(j===t.i)hole=c;row.append(c)});
+    st.append(row);
+    const tiles=el('div','tiles');
+    t.opts.forEach(L=>{const b=el('button','tile',L);
+      const put=()=>{if(L!==t.L)return wrong(b);hole.textContent=L;hole.className='slot filled got';popIn(hole);b.classList.add('used');done()};
+      dragTile(b,put,put);tiles.append(b)});
+    st.append(tiles,el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
+  }},
 { id:'minwords', grade:1, title:'1 минутта оқы: сөздер', icon:'📗', bg:'#c8e6c9', sub:'Оқыған сөзіңді бас — жасыл болады', noProgress:true,
   make:()=>[0],
   render(_,st,done,alive){
@@ -620,6 +636,8 @@ function editMine(after){
     .map(x=>x.charAt(0).toLocaleUpperCase('kk')+x.slice(1));
     try{localStorage.setItem('nu_mywords',JSON.stringify(w))}catch(e){alert('Сақтау мүмкін болмады');return}
     ov.remove();after&&after()}}
+const MISSING_WORDS=['ҚАР','ОТАН','САРЫ','АСЫҚ','ТОТЫ','ТАУЫҚ','ҚЫЗ','МАСА','АЛТЫ','ҚАЛА','ТАҚТА','ЛАҚ','УЫҚ','СУСЫН','ҚЫЗЫЛ','ОЗАТ','ОРМАН','АЛМА'];
+const MISS_EMO={'ҚАР':'❄️','ОТАН':'🇰🇿','САРЫ':'🟡','ТОТЫ':'🦜','ТАУЫҚ':'🐔','ҚЫЗ':'👧','МАСА':'🦟','АЛТЫ':'6️⃣','ҚАЛА':'🏙️','ЛАҚ':'🐐','СУСЫН':'🧃','ҚЫЗЫЛ':'🔴','ОРМАН':'🌲','АЛМА':'🍎','ОЗАТ':'🏅'};
 const TRAIN_WORDS=['Ата','Арна','Алу','Аула','Таза','Сана','Салу','Азық','Қазы','Қасық','Сан','Тау','Қозы','Мата','Мықты','Тамыз','Тамақ','Қамыс'];
 const LOCO=`<svg class="loco" viewBox="0 0 220 170"><rect x="0" y="40" width="80" height="90" rx="8" fill="#1e3a8a"/><rect x="12" y="52" width="56" height="40" rx="6" fill="#bfdbfe"/>
 <rect x="70" y="70" width="120" height="60" rx="26" fill="#2563eb"/><rect x="120" y="30" width="26" height="44" fill="#1e293b"/><rect x="112" y="22" width="42" height="14" rx="4" fill="#334155"/>
