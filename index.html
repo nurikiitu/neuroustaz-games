@@ -204,6 +204,67 @@ button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation;
 #flash{position:fixed;left:50%;top:18%;transform:translateX(-50%);font-size:70px;font-weight:900;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.3);pointer-events:none;opacity:0;transition:opacity .2s;z-index:15;white-space:nowrap}
 #flash.show{opacity:1}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
+
+/* ===== ТЕЛЕФОН ===== */
+.tile,.cbtn{touch-action:none}
+@media (max-width:700px){
+ .stage{padding:8px 10px 20px;gap:14px}
+ .topbar{padding:10px 10px 4px;gap:8px}
+ .tbtn{font-size:16px;padding:9px 12px;border-radius:14px}
+ .ttitle{font-size:18px}
+ .progress{gap:6px;min-height:22px;flex-wrap:wrap}.progress i{width:14px;height:14px}
+ .home-head{padding:14px 10px 0}.home-head h1{font-size:34px}.home-head p{font-size:16px}
+ .fs-btn{display:none}
+ .grades{grid-template-columns:1fr 1fr;gap:14px;padding:16px 12px}
+ .gradecard{padding:16px 6px;border-radius:24px;border-width:4px}.gradecard .gn{font-size:64px}.gradecard .gt{font-size:24px}.gradecard .gc{font-size:15px}
+ .gradebar{padding:8px 12px 0}.gradebar span{display:none}.gname{font-size:26px}
+ .grid{grid-template-columns:1fr 1fr;gap:12px;padding:12px 12px 30px}
+ .gcard{padding:14px 8px;border-radius:20px;gap:6px}.gcard .ic{width:64px;height:64px;font-size:36px}.gcard .t{font-size:16px}.gcard .s{font-size:12px}
+ .task-title{font-size:22px}.task-title small{font-size:.7em}
+ .howto{font-size:14px;padding:6px 12px;text-align:center}
+ .tiles{gap:10px}
+ .tile{min-width:62px;height:62px;padding:0 10px;font-size:34px;border-radius:16px;box-shadow:0 5px 0 #8aa2cc}
+ .tile.wide{font-size:22px}
+ .speak{width:54px;height:54px;font-size:26px}
+ .roof{width:250px;height:80px;font-size:42px;padding-bottom:4px}
+ .hbody{width:214px;border-width:6px}.hrow{height:56px;border-top-width:5px}.hc{width:66px;height:44px;font-size:32px}
+ .dots{grid-template-columns:repeat(5,32px);gap:8px;padding:10px}.dot{width:32px;height:32px;border-width:3px}
+ .eq{font-size:48px;gap:10px}
+ .box{width:68px;height:68px;border-radius:16px;border-width:4px}.box.big{width:76px;height:76px;font-size:44px}.box.wide{min-width:110px}
+ .eq.conv{font-size:30px}
+ .pic{font-size:84px}
+ .slots{gap:6px}.slot{width:44px;height:58px;font-size:32px;border-radius:12px;border-width:3px}
+ .pyr{padding:14px 12px;gap:12px;border-radius:20px}.prow{gap:22px}.pc{width:66px;height:66px;font-size:28px;border-width:4px}
+ .rule{font-size:15px;padding:8px 12px}
+ .bigbtn{font-size:24px;padding:14px 26px;border-radius:20px}
+ .wordcard{min-width:0;padding:18px 26px;font-size:52px}
+ .sclock{font-size:24px;padding:2px 12px;min-width:64px}
+ .counter{font-size:20px}
+ .timer{height:18px}
+ .rtext{font-size:19px;padding:14px 16px;border-radius:20px}
+ .scheme{padding:14px;gap:10px;border-radius:20px}.scheme .lt{gap:8px}.scheme .lt b{width:40px;font-size:36px}
+ .scheme .sc{gap:8px;padding:8px}.circ{width:36px;height:36px;margin:0 2px}
+ .cbtn{width:84px;height:84px;border-width:5px}
+ .legend{font-size:15px;gap:14px;padding:6px 14px}.legend i{width:18px;height:18px}
+ .objs{grid-template-columns:repeat(5,44px);gap:6px;font-size:36px;line-height:44px;padding:12px;min-height:70px;border-radius:20px}
+ .cmp{gap:8px}.cmp .objs{grid-template-columns:repeat(3,30px);font-size:24px;line-height:30px;padding:8px;min-width:0}
+ .sign{width:58px;height:58px;font-size:40px;border-width:3px}
+ .firstw{font-size:48px}.firstw .blank{width:50px;min-height:58px}
+ .bins{gap:8px;width:100%}.bin{min-width:0;flex:1 1 30%;min-height:110px;padding:8px;border-radius:18px;border-width:4px}.bl{font-size:20px}.chip{font-size:20px;padding:2px 8px}
+ .eqcard{font-size:50px;padding:12px 24px;border-radius:20px}
+ .tscene{min-height:280px;border-radius:20px}.tscene .sun{font-size:44px}.tscene .cl{font-size:54px}.tscene .c2{font-size:40px}
+ .wagon{min-width:0;padding:10px 16px 26px;border-width:5px;border-radius:12px}.wagon span{font-size:38px;padding:4px 14px}
+ .wagon i{width:30px;height:30px;border-width:6px;bottom:-18px}.wagon i:nth-of-type(1){left:14px}.wagon i:nth-of-type(2){right:14px}
+ .link{width:14px;height:8px;margin-bottom:24px}.loco{width:140px;margin-bottom:-12px}
+ .duel{flex-direction:column;gap:12px}.side{padding:10px;gap:10px;border-width:4px;border-radius:20px}
+ .shead{font-size:22px}.seq{font-size:42px;min-height:76px;gap:10px}.sdone{font-size:36px}.sdots i{width:12px;height:12px}
+ .wgrid{grid-template-columns:repeat(3,1fr);gap:8px;width:100%}.wcard{font-size:21px;padding:12px 2px;border-radius:14px;box-shadow:0 5px 0 #8aa2cc}
+ .wsets{gap:8px}.wset{font-size:16px;padding:8px 12px;border-radius:16px;border-width:3px}.wset small{font-size:12px}
+ .fbox{padding:24px 18px;border-radius:28px;margin:0 12px}.fbox .stars{font-size:52px}.fbox h2{font-size:54px}.fbox p{font-size:21px;margin:8px 0 18px}
+ .fbox .tbtn{font-size:18px;padding:12px 16px}.fbox .row{gap:10px}
+ #flash{font-size:34px}
+ .webox{padding:18px}.webox h3{font-size:26px}.webox p{font-size:15px}.webox textarea{font-size:22px;height:200px}
+}
 </style>
 </head>
 <body>
