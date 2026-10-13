@@ -268,11 +268,11 @@ let flashT;
 function flash(t){const f=$('#flash');f.textContent=t;f.classList.add('show');clearTimeout(flashT);flashT=setTimeout(()=>f.classList.remove('show'),900)}
 function wrong(e){e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake');beep('bad');flash('Тағы байқап көр 🙂')}
 function popIn(e){e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')}
-let CF=0;function stopConfetti(){CF++;const c=$('#confetti');c.getContext('2d').clearRect(0,0,c.width,c.height)}
-function confetti(){const my=++CF,c=$('#confetti'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+let CF=0;function stopConfetti(){CF++;const c=$('#confetti');c.getContext('2d').clearRect(0,0,c.width,c.height);c.width=c.width}
+function confetti(){setTimeout(()=>{if(CF===my)stopConfetti()},4500);const my=++CF,c=$('#confetti'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
   const cols=['#e53935','#fdd835','#43a047','#1e88e5','#8e24aa','#fb8c00'];
   const P=Array.from({length:200},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.6,vx:-2+Math.random()*4,vy:3+Math.random()*5,s:10+Math.random()*12,r:Math.random()*6,vr:-.2+Math.random()*.4,c:cols[rnd(0,5)]}));
-  let t=0;(function f(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()});
+  let t=0;(function f(){x.clearRect(0,0,c.width,c.height);if(my!==CF)return;P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()});
   if(my!==CF)return;if(++t<260)requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height)})()}
 
 /* ---------- data ---------- */
