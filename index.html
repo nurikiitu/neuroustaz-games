@@ -682,6 +682,9 @@ function openGrade(n){curGrade=n;$('#grades').style.display='none';$('#gradebar'
 GRADES.forEach(G=>{const k=GAMES.filter(g=>g.grade===G.n).length;
   const b=el('button','gradecard',`<div class="gn">${G.n}</div><div class="gt">СЫНЫП</div><div class="gc">${k?k+' ойын':'жақында'}</div>`);
   b.style.background=G.c;b.onclick=()=>{beep('tap');openGrade(G.n)};$('#grades').append(b)});
+/* жеке сілтеме: ?s=1 немесе /1/ — тек сол сынып ашылады */
+const LOCK=(()=>{const q=new URLSearchParams(location.search).get('s')||location.hash.replace('#','');const n=+q;return GRADES.some(g=>g.n===n)?n:null})();
+if(LOCK){openGrade(LOCK);$('#gradebar button').style.visibility='hidden';window.showGrades=()=>openGrade(LOCK)}
 </script>
 </body>
 </html>
