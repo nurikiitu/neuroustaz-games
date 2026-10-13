@@ -112,6 +112,15 @@ button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation;
 .wagon i:nth-of-type(1){left:40px}.wagon i:nth-of-type(2){right:40px}
 .link{width:30px;height:12px;background:#1e293b;margin-bottom:40px}
 .loco{width:300px;height:auto;margin-bottom:-24px}
+.wgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;width:min(1700px,96vw)}
+.wcard{background:#fff;border-radius:22px;padding:18px 6px;font-size:clamp(34px,3.4vw,60px);font-weight:900;color:var(--ink);box-shadow:0 8px 0 #8aa2cc;transition:background .2s,color .2s}
+.wcard:active{transform:translateY(5px);box-shadow:0 3px 0 #8aa2cc}
+.wcard.ok{background:#43a047;color:#fff;box-shadow:0 8px 0 #2e7d32}
+.wcard{position:relative}.wcard.ok::after{content:'✓';position:absolute;top:2px;right:12px;font-size:.55em}
+.wcard.miss{opacity:.45}
+.sclock.warn{background:#d32f2f;animation:pop .5s infinite alternate}
+.task-title small{font-size:.6em;opacity:.9}
+.fbox p small{font-size:.65em;color:#666;display:block;margin-top:8px}
 .hrow.active .hc.empty{border:5px solid var(--yellow);box-shadow:0 0 0 7px rgba(253,216,53,.55)}
 
 /* ten */
@@ -483,6 +492,31 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
       const put=()=>{if(v!==t.ans)return wrong(b);box.textContent=N(v);box.className='box filled wide';popIn(box);b.classList.add('used');done()};
       dragTile(b,put,put);tiles.append(b)});
     st.append(tiles,el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
+  }},
+{ id:'minwords', grade:1, title:'1 минутта оқы: сөздер', icon:'📗', bg:'#c8e6c9', sub:'Оқыған сөзіңді бас — жасыл болады', noProgress:true,
+  make:()=>[0],
+  render(_,st,done,alive){
+    let rec=null;try{rec=+localStorage.getItem('nu_minwords_rec')||null}catch(e){}
+    st.append(el('div','task-title','Сөздерді 1 минут ішінде оқы!<br><small>Оқыған сөзіңді бас 👆</small>'));
+    if(rec)st.append(el('div','howto','🏆 Рекорд: '+rec+' сөз'));
+    const go=el('button','bigbtn green','БАСТАУ 🚀');st.append(go);
+    go.onclick=()=>{st.innerHTML='';const words=shuffle(TRAIN_WORDS);let read=0,over=false,iv;const t0=performance.now();
+      const top=el('div','row'),tm=el('div','timer','<i></i>'),bar=tm.firstChild,clk=el('div','sclock','60'),cnt=el('div','counter','✅ 0 / '+words.length);
+      bar.style.transition='width .2s linear';top.append(tm,clk);st.append(top,cnt);
+      const grid=el('div','wgrid');st.append(grid);
+      const fin=el('button','tbtn','🏁 Аяқтау');st.append(fin);
+      const stop=()=>{if(over)return;over=true;clearInterval(iv);
+        const sec=Math.min(60,Math.round((performance.now()-t0)/1000));
+        let nr=false;try{if(!rec||read>rec){localStorage.setItem('nu_minwords_rec',read);nr=read>0}}catch(e){}
+        const left=[...grid.children].filter(c=>!c.classList.contains('ok')).map(c=>c.textContent);
+        grid.querySelectorAll('.wcard:not(.ok)').forEach(c=>c.classList.add('miss'));
+        setTimeout(()=>alive()&&done(`Сен ${read} сөз оқыдың!`+(read===words.length?`<br>⏱ ${sec} секундта`:'')+(nr?'<br>🏆 Жаңа рекорд!':'')+(left.length&&left.length<words.length?`<br><small>Оқылмаған: ${left.join(', ')}</small>`:'')),1200)};
+      words.forEach(w=>{const c=el('button','wcard',w);
+        c.onclick=()=>{if(over)return;const on=c.classList.toggle('ok');read+=on?1:-1;if(on){beep('tap');popIn(c)}cnt.textContent='✅ '+read+' / '+words.length;if(read===words.length)stop()};
+        grid.append(c)});
+      fin.onclick=stop;
+      iv=setInterval(()=>{if(!alive())return clearInterval(iv);const left=Math.max(0,60-(performance.now()-t0)/1000);bar.style.width=(left/60*100)+'%';clk.textContent=Math.ceil(left);
+        clk.classList.toggle('warn',left<=10);if(left<=0){beep('bad');stop()}},200)};
   }},
 { id:'eq', grade:2, title:'Теңдеу', icon:'❎', bg:'#c5cae9', sub:'х-ті тап: х + 5 = 10',
   make:()=>Array.from({length:10},()=>eqTask()),
