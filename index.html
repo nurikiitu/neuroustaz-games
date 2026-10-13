@@ -504,11 +504,10 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
     st.append(tiles,el('div','howto','👆 Ұстап, орнына апар немесе басып таңда'));
   }},
 { id:'missing', grade:1, title:'Жоғалған әріптер', icon:'🔍', bg:'#fff59d', sub:'Сөзге жетпейтін әріпті тап',
-  make:()=>shuffle(MISSING_WORDS).map(w=>{const i=rnd(0,w.length-1),L=w[i],pool=(VOWELS.includes(L)?'АӘЕОӨҰҮЫІ':'БДЖЗКҚЛМНПРСТШ').split('').filter(x=>x!==L);
+  make:()=>shuffle(MISSING_WORDS).map(w=>{const i=(w.length>=3&&Math.random()<.8)?rnd(1,w.length-2):rnd(0,w.length-1),L=w[i],pool=(VOWELS.includes(L)?'АӘЕОӨҰҮЫІ':'БДЖЗКҚЛМНПРСТШ').split('').filter(x=>x!==L);
     return{w,i,L,opts:shuffle([L,...pick(pool,2)])}}),
   render(t,st,done){
     st.append(el('div','task-title','Жоғалған әріпті тап'));
-    if(MISS_EMO[t.w])st.append(el('div','pic',MISS_EMO[t.w]));
     const row=el('div','slots');let hole;
     [...t.w].forEach((L,j)=>{const c=el('div',j===t.i?'slot drop next':'slot filled',j===t.i?'':L);if(j===t.i)hole=c;row.append(c)});
     st.append(row);
