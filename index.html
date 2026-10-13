@@ -121,6 +121,15 @@ button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation;
 .sclock.warn{background:#d32f2f;animation:pop .5s infinite alternate}
 .task-title small{font-size:.6em;opacity:.9}
 .fbox p small{font-size:.65em;color:#666;display:block;margin-top:8px}
+.wsets{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;max-width:1500px}
+.wset{background:rgba(255,255,255,.9);border-radius:22px;padding:16px 26px;font-size:28px;font-weight:900;color:var(--ink);box-shadow:0 6px 0 rgba(0,0,0,.18);display:flex;flex-direction:column;align-items:center;gap:2px;border:5px solid transparent}
+.wset small{font-size:18px;opacity:.6}
+.wset.on{background:#fff;border-color:var(--yellow);box-shadow:0 0 0 6px rgba(253,216,53,.5),0 6px 0 rgba(0,0,0,.18)}
+.wedit{position:fixed;inset:0;background:rgba(10,30,80,.6);display:flex;align-items:center;justify-content:center;z-index:40}
+.webox{background:#fff;border-radius:30px;padding:30px 36px;width:min(900px,92vw);display:flex;flex-direction:column;gap:14px}
+.webox h3{font-size:40px}.webox p{font-size:22px;font-weight:700;opacity:.7}
+.webox textarea{width:100%;height:260px;font:800 32px 'Nunito',sans-serif;border:4px solid #bcd;border-radius:18px;padding:14px;user-select:text;-webkit-user-select:text}
+.webox .tbtn.ok{background:var(--green);color:#fff}
 .hrow.active .hc.empty{border:5px solid var(--yellow);box-shadow:0 0 0 7px rgba(253,216,53,.55)}
 
 /* ten */
@@ -496,18 +505,18 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
 { id:'minwords', grade:1, title:'1 минутта оқы: сөздер', icon:'📗', bg:'#c8e6c9', sub:'Оқыған сөзіңді бас — жасыл болады', noProgress:true,
   make:()=>[0],
   render(_,st,done,alive){
-    let rec=null;try{rec=+localStorage.getItem('nu_minwords_rec')||null}catch(e){}
     st.append(el('div','task-title','Сөздерді 1 минут ішінде оқы!<br><small>Оқыған сөзіңді бас 👆</small>'));
-    if(rec)st.append(el('div','howto','🏆 Рекорд: '+rec+' сөз'));
-    const go=el('button','bigbtn green','БАСТАУ 🚀');st.append(go);
-    go.onclick=()=>{st.innerHTML='';const words=shuffle(TRAIN_WORDS);let read=0,over=false,iv;const t0=performance.now();
+    let rec=null,RK='';
+    const recEl=el('div','howto','');
+    wordPicker(st,id=>{RK='nu_mw_rec_'+id;rec=null;try{rec=+localStorage.getItem(RK)||null}catch(e){}recEl.textContent=rec?'🏆 Рекорд: '+rec+' сөз':'🏆 Рекорд жоқ — бірінші бол!'},start,recEl);
+    function start(list){st.innerHTML='';const words=shuffle(list).slice(0,30);let read=0,over=false,iv;const t0=performance.now();
       const top=el('div','row'),tm=el('div','timer','<i></i>'),bar=tm.firstChild,clk=el('div','sclock','60'),cnt=el('div','counter','✅ 0 / '+words.length);
       bar.style.transition='width .2s linear';top.append(tm,clk);st.append(top,cnt);
       const grid=el('div','wgrid');st.append(grid);
       const fin=el('button','tbtn','🏁 Аяқтау');st.append(fin);
       const stop=()=>{if(over)return;over=true;clearInterval(iv);
         const sec=Math.min(60,Math.round((performance.now()-t0)/1000));
-        let nr=false;try{if(!rec||read>rec){localStorage.setItem('nu_minwords_rec',read);nr=read>0}}catch(e){}
+        let nr=false;try{if(!rec||read>rec){localStorage.setItem(RK,read);nr=read>0}}catch(e){}
         const left=[...grid.children].filter(c=>!c.classList.contains('ok')).map(c=>c.textContent);
         grid.querySelectorAll('.wcard:not(.ok)').forEach(c=>c.classList.add('miss'));
         setTimeout(()=>alive()&&done(`Сен ${read} сөз оқыдың!`+(read===words.length?`<br>⏱ ${sec} секундта`:'')+(nr?'<br>🏆 Жаңа рекорд!':'')+(left.length&&left.length<words.length?`<br><small>Оқылмаған: ${left.join(', ')}</small>`:'')),1200)};
@@ -516,7 +525,7 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
         grid.append(c)});
       fin.onclick=stop;
       iv=setInterval(()=>{if(!alive())return clearInterval(iv);const left=Math.max(0,60-(performance.now()-t0)/1000);bar.style.width=(left/60*100)+'%';clk.textContent=Math.ceil(left);
-        clk.classList.toggle('warn',left<=10);if(left<=0){beep('bad');stop()}},200)};
+        clk.classList.toggle('warn',left<=10);if(left<=0){beep('bad');stop()}},200)}
   }},
 { id:'eq', grade:2, title:'Теңдеу', icon:'❎', bg:'#c5cae9', sub:'х-ті тап: х + 5 = 10',
   make:()=>Array.from({length:10},()=>eqTask()),
@@ -534,8 +543,8 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
   make:()=>[0],
   render(_,st,done,alive){
     st.append(el('div','task-title','Пойыз сөздерді алып келеді.<br>Сөзді оқып үлгер!'));
-    const go=el('button','bigbtn green','БАСТАУ 🚀');st.append(go);
-    go.onclick=()=>{st.innerHTML='';const words=shuffle(TRAIN_WORDS);let i=0,anim=null,paused=false;
+    wordPicker(st,null,start);
+    function start(list){st.innerHTML='';const words=shuffle(list);let i=0,anim=null,paused=false;
       const cnt=el('div','counter',''),scene=el('div','tscene','<div class="sun">☀️</div><div class="cl c1">☁️</div><div class="cl c2">☁️</div><div class="hills"></div><div class="rails"></div>');
       const pb=el('button','tbtn','⏸ Тоқтату');
       st.append(cnt,scene,pb);
@@ -546,7 +555,7 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
         scene.append(tr);const W=scene.clientWidth,w=tr.offsetWidth;
         anim=tr.animate([{transform:`translateX(${-w}px)`},{transform:`translateX(${W}px)`}],{duration:5000,easing:'linear'});
         anim.onfinish=()=>{tr.remove();i++;next()}};
-      next()};
+      next()}
   }},
 ...[1,2].map(LV=>({ id:'duel'+LV, title:'Жарыс: қосу, азайту · '+LV+'-деңгей', icon:LV===1?'🏁':'🏆', bg:LV===1?'#ffe082':'#ffcc80', sub:LV===1?'10 көлеміндегі сандар':'20 көлеміндегі сандар', grade:LV, noProgress:true,
   make:()=>[0],
@@ -582,6 +591,35 @@ function eqTask(){const k=rnd(0,3);let a,b,c,txt,ans;
   const opts=[ans];if(trap!==ans)opts.push(trap);
   let g=0;while(opts.length<3&&g++<50){const v=ans+(Math.random()<.5?-1:1)*rnd(1,2);if(v>=0&&!opts.includes(v))opts.push(v)}
   return{txt,ans,opts:shuffle(opts)}}
+const WORDSETS=[
+ {id:'t',name:'⭐ Мұғалім тізімі',get:()=>TRAIN_WORDS},
+ {id:'l1',name:'1-деңгей · қысқа сөздер',get:()=>['Ата','Ана','Апа','Аға','Әке','Ит','Ат','Ай','Үй','Ал','Сан','Тау','Алу','Қар','Тас','Нан','Бал','Көл','Гүл','Күн','Су','Сол','Қаз','Доп','Ет','Сүт','Шай','Тұз','Көз','Қол']},
+ {id:'l2',name:'2-деңгей · 4 әріпті сөздер',get:()=>['Арна','Аула','Таза','Сана','Салу','Азық','Қазы','Қозы','Мата','Бала','Қала','Дала','Кеме','Алма','Есік','Бақа','Ағаш','Қоян','Ешкі','Айна','Шана','Тары','Дана','Ұшақ']},
+ {id:'l3',name:'3-деңгей · ұзын сөздер',get:()=>['Қасық','Мықты','Тамыз','Тамақ','Қамыс','Балық','Қалам','Кітап','Мысық','Сәбіз','Қауын','Сағат','Жылан','Тышқан','Жаңбыр','Қарбыз','Мектеп','Терезе','Орындық','Дәптер']},
+ {id:'mine',name:'✏️ Менің сөздерім',get:()=>myWords()}];
+function myWords(){try{return JSON.parse(localStorage.getItem('nu_mywords')||'[]')}catch(e){return[]}}
+function wordPicker(st,onPick,onStart,extra){
+  let cur='t';try{cur=localStorage.getItem('nu_wset')||'t'}catch(e){}
+  if(!WORDSETS.some(w=>w.id===cur))cur='t';
+  const box=el('div','wsets');st.append(box);if(extra)st.append(extra);
+  const go=el('button','bigbtn green','БАСТАУ 🚀');st.append(go);
+  const draw=()=>{box.innerHTML='';WORDSETS.forEach(w=>{const n=w.get().length;
+    const b=el('button','wset'+(w.id===cur?' on':''),`${w.name}<small>${n?n+' сөз':'бос — толтыр'}</small>`);
+    b.onclick=()=>{if(w.id==='mine'&&(!n||cur==='mine'))return editMine(()=>{cur='mine';save();draw()});cur=w.id;save();draw()};box.append(b)});
+    if(cur==='mine'&&myWords().length){const e=el('button','tbtn','✏️ Сөздерді өзгерту');e.onclick=()=>editMine(draw);box.append(e)}
+    onPick&&onPick(cur)};
+  const save=()=>{try{localStorage.setItem('nu_wset',cur)}catch(e){}};
+  go.onclick=()=>{const list=WORDSETS.find(w=>w.id===cur).get();if(!list.length)return editMine(()=>{cur='mine';draw()});onStart(list)};
+  draw()}
+function editMine(after){
+  const ov=el('div','wedit',`<div class="webox"><h3>✏️ Менің сөздерім</h3><p>Сөздерді үтір арқылы немесе әр жолға бір сөзден жазыңыз (30 сөзге дейін)</p>
+  <textarea spellcheck="false"></textarea><div class="row"><button class="tbtn ok">💾 Сақтау</button><button class="tbtn no">✖ Болдырмау</button></div></div>`);
+  document.body.append(ov);const ta=ov.querySelector('textarea');ta.value=myWords().join(', ');setTimeout(()=>ta.focus(),50);
+  ov.querySelector('.no').onclick=()=>ov.remove();
+  ov.querySelector('.ok').onclick=()=>{const w=[...new Set(ta.value.split(/[,\n;]+/).map(x=>x.trim()).filter(Boolean))].slice(0,30)
+    .map(x=>x.charAt(0).toLocaleUpperCase('kk')+x.slice(1));
+    try{localStorage.setItem('nu_mywords',JSON.stringify(w))}catch(e){alert('Сақтау мүмкін болмады');return}
+    ov.remove();after&&after()}}
 const TRAIN_WORDS=['Ата','Арна','Алу','Аула','Таза','Сана','Салу','Азық','Қазы','Қасық','Сан','Тау','Қозы','Мата','Мықты','Тамыз','Тамақ','Қамыс'];
 const LOCO=`<svg class="loco" viewBox="0 0 220 170"><rect x="0" y="40" width="80" height="90" rx="8" fill="#1e3a8a"/><rect x="12" y="52" width="56" height="40" rx="6" fill="#bfdbfe"/>
 <rect x="70" y="70" width="120" height="60" rx="26" fill="#2563eb"/><rect x="120" y="30" width="26" height="44" fill="#1e293b"/><rect x="112" y="22" width="42" height="14" rx="4" fill="#334155"/>
