@@ -131,6 +131,13 @@ button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation;
 .webox textarea{width:100%;height:260px;font:800 32px 'Nunito',sans-serif;border:4px solid #bcd;border-radius:18px;padding:14px;user-select:text;-webkit-user-select:text}
 .webox .tbtn.ok{background:var(--green);color:#fff}
 .slot.filled.got{color:var(--green)}
+.shcard{flex-direction:column;height:auto;padding:10px 34px;gap:0}.shcard span{font-size:clamp(70px,9vw,130px);line-height:1.1}.shcard small{font-size:clamp(20px,2.4vw,32px)}
+.shbins{display:flex;gap:clamp(8px,2vw,26px);justify-content:center;width:100%;max-width:1200px}
+.shbin{flex:1;max-width:340px;background:#fff;border:4px dashed #9fb3d6;border-radius:26px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 6px 0 rgba(0,0,0,.15)}
+.shbin b{font-size:clamp(16px,2.2vw,30px);font-weight:900;color:var(--ink)}
+.shp{width:clamp(56px,7vw,110px);height:clamp(56px,7vw,110px);background:var(--c)}
+.shp.c{border-radius:50%}.shp.s{border-radius:8px}.shp.t{clip-path:polygon(50% 4%,98% 96%,2% 96%)}
+.shin{font-size:clamp(26px,3vw,40px);min-height:40px}
 .hrow.active .hc.empty{border:5px solid var(--yellow);box-shadow:0 0 0 7px rgba(253,216,53,.55)}
 
 /* ten */
@@ -603,6 +610,17 @@ sortGame({ id:'hardsoft', grade:2, title:'Жуан ба, жіңішке ме?', 
       iv=setInterval(()=>{if(!alive())return clearInterval(iv);const left=Math.max(0,60-(performance.now()-t0)/1000);bar.style.width=(left/60*100)+'%';clk.textContent=Math.ceil(left);
         clk.classList.toggle('warn',left<=10);if(left<=0){beep('bad');stop()}},200)}
   }},
+{ id:'shp', grade:3, own:true, title:'Пішініне қарай топтастыр', icon:'🔷', bg:'#b2dfdb', sub:'Затты дұрыс пішінге апар',
+  make:()=>shuffle(Object.keys(SHP_IT).flatMap(k=>pick(SHP_IT[k],4).map(x=>({e:x[0],n:x[1],k})))),
+  render(t,st,done){
+    st.append(el('div','task-title','Бұл зат қандай пішінге ұқсайды?'));
+    const card=el('button','tile shcard',`<span>${t.e}</span><small>${t.n}</small>`);st.append(card);
+    const bins=el('div','shbins');st.append(bins,el('div','howto','👆 Затты ұстап, пішінге апар немесе пішінді бас'));
+    let fin=false;const check=b=>{if(fin)return;if(b.dataset.k===t.k){fin=true;beep('tap');card.classList.add('used');b.querySelector('.shin').append(el('span','pop',t.e));done()}
+      else{wrong(b);flash(`${t.n} — ${SHP_N[t.k][0].toLowerCase()}`)}};
+    Object.entries(SHP_N).forEach(([k,[name,col]])=>{const b=el('button','shbin drop',`<div class="shp ${k}" style="--c:${col}"></div><b>${name}</b><div class="shin"></div>`);b.dataset.k=k;b.onclick=()=>check(b);bins.append(b)});
+    dragTile(card,()=>{},check);
+  }},
 { id:'eq', grade:2, title:'Теңдеу', icon:'❎', bg:'#c5cae9', sub:'х-ті тап: х + 5 = 10',
   make:()=>Array.from({length:10},()=>eqTask()),
   render(t,st,done){
@@ -698,6 +716,10 @@ function editMine(after){
     ov.remove();after&&after()}}
 const MISSING_WORDS=['ҚАР','ОТАН','САРЫ','АСЫҚ','ТОТЫ','ТАУЫҚ','ҚЫЗ','МАСА','АЛТЫ','ҚАЛА','ТАҚТА','ЛАҚ','УЫҚ','СУСЫН','ҚЫЗЫЛ','ОЗАТ','ОРМАН','АЛМА'];
 const MISS_EMO={'ҚАР':'❄️','ОТАН':'🇰🇿','САРЫ':'🟡','ТОТЫ':'🦜','ТАУЫҚ':'🐔','ҚЫЗ':'👧','МАСА':'🦟','АЛТЫ':'6️⃣','ҚАЛА':'🏙️','ЛАҚ':'🐐','СУСЫН':'🧃','ҚЫЗЫЛ':'🔴','ОРМАН':'🌲','АЛМА':'🍎','ОЗАТ':'🏅'};
+const SHP_N={c:['Шеңбер','#ff4d8d'],s:['Төртбұрыш','#1e88e5'],t:['Үшбұрыш','#fb8c00']};
+const SHP_IT={c:[['⚽','доп'],['🏀','доп'],['🕐','сағат'],['🍪','печенье'],['🍩','пончик'],['🪙','тиын'],['🌕','ай'],['🍊','апельсин'],['🎯','нысана'],['🔘','түйме']],
+  s:[['📱','телефон'],['📘','кітап'],['🖼️','сурет'],['🚪','есік'],['🧱','кірпіш'],['🎁','сыйлық'],['✉️','хат'],['📦','қорап'],['🍫','шоколад'],['📅','күнтізбе']],
+  t:[['⛺','шатыр'],['🍕','пицца'],['🎄','шырша'],['⚠️','белгі'],['📐','сызғыш'],['🧀','ірімшік'],['🏔️','тау']]};
 const TRAIN_WORDS=['Ата','Арна','Алу','Аула','Таза','Сана','Салу','Азық','Қазы','Қасық','Сан','Тау','Қозы','Мата','Мықты','Тамыз','Тамақ','Қамыс'];
 const LOCO=`<svg class="loco" viewBox="0 0 220 170"><rect x="0" y="40" width="80" height="90" rx="8" fill="#1e3a8a"/><rect x="12" y="52" width="56" height="40" rx="6" fill="#bfdbfe"/>
 <rect x="70" y="70" width="120" height="60" rx="26" fill="#2563eb"/><rect x="120" y="30" width="26" height="44" fill="#1e293b"/><rect x="112" y="22" width="42" height="14" rx="4" fill="#334155"/>
@@ -738,11 +760,11 @@ let curGrade=null;
 function showGrades(){curGrade=null;$('#grades').style.display='';$('#gradebar').style.display='none';$('#grid').innerHTML=''}
 function openGrade(n){curGrade=n;$('#grades').style.display='none';$('#gradebar').style.display='flex';$('#gname').textContent=n+'-СЫНЫП';
   const grid=$('#grid');grid.innerHTML='';const list=GAMES.filter(g=>g.grade===n);
-  if(n===3){const c=el('a','gcard',`<div class="ic" style="background:#d1c4e9">🚀</div><div class="t">Көбейту әлемі</div><div class="s">9 ойын: көбейту мен бөлу</div>`);c.href='https://nurikiitu.github.io/kobeytu-alemi/';c.style.textDecoration='none';c.style.color='inherit';grid.append(c)}
+  if(n===3){const c=el('a','gcard',`<div class="ic" style="background:#d1c4e9">🚀</div><div class="t">Көбейту әлемі</div><div class="s">8 ойын: көбейту мен бөлу</div>`);c.href='https://nurikiitu.github.io/kobeytu-alemi/';c.style.textDecoration='none';c.style.color='inherit';grid.append(c)}
   else if(!list.length)grid.append(el('div','soon','🛠 Жақында ойындар қосылады!'));
   list.forEach(g=>{const c=el('button','gcard',`<div class="ic" style="background:${g.bg}">${g.icon}</div><div class="t">${g.title}</div><div class="s">${g.sub}</div>`);c.onclick=()=>{beep('tap');startGame(g)};grid.append(c)})}
 GRADES.forEach(G=>{const k=GAMES.filter(g=>g.grade===G.n).length;
-  const b=el('button','gradecard',`<div class="gn">${G.n}</div><div class="gt">СЫНЫП</div><div class="gc">${G.n===3?'9 ойын':k?k+' ойын':'жақында'}</div>`);
+  const b=el('button','gradecard',`<div class="gn">${G.n}</div><div class="gt">СЫНЫП</div><div class="gc">${G.n===3?(8+k)+' ойын':k?k+' ойын':'жақында'}</div>`);
   b.style.background=G.c;b.onclick=()=>{beep('tap');openGrade(G.n)};$('#grades').append(b)});
 /* жеке сілтеме: ?s=1 немесе /1/ — тек сол сынып ашылады */
 const LOCK=(()=>{const q=new URLSearchParams(location.search).get('s')||location.hash.replace('#','');const n=+q;return GRADES.some(g=>g.n===n)?n:null})();
