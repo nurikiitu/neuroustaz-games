@@ -738,11 +738,11 @@ let curGrade=null;
 function showGrades(){curGrade=null;$('#grades').style.display='';$('#gradebar').style.display='none';$('#grid').innerHTML=''}
 function openGrade(n){curGrade=n;$('#grades').style.display='none';$('#gradebar').style.display='flex';$('#gname').textContent=n+'-СЫНЫП';
   const grid=$('#grid');grid.innerHTML='';const list=GAMES.filter(g=>g.grade===n);
-  if(n===3){const c=el('a','gcard',`<div class="ic" style="background:#d1c4e9">🚀</div><div class="t">Көбейту әлемі</div><div class="s">9 ойын: көбейту мен бөлу</div>`);c.href='https://nurikiitu.github.io/kobeytu-alemi/';c.style.textDecoration='none';c.style.color='inherit';grid.append(c)}
+  if(n===3){const c=el('a','gcard',`<div class="ic" style="background:#d1c4e9">🚀</div><div class="t">Көбейту әлемі</div><div class="s">8 ойын: көбейту мен бөлу</div>`);c.href='https://nurikiitu.github.io/kobeytu-alemi/';c.style.textDecoration='none';c.style.color='inherit';grid.append(c)}
   else if(!list.length)grid.append(el('div','soon','🛠 Жақында ойындар қосылады!'));
   list.forEach(g=>{const c=el('button','gcard',`<div class="ic" style="background:${g.bg}">${g.icon}</div><div class="t">${g.title}</div><div class="s">${g.sub}</div>`);c.onclick=()=>{beep('tap');startGame(g)};grid.append(c)})}
 GRADES.forEach(G=>{const k=GAMES.filter(g=>g.grade===G.n).length;
-  const b=el('button','gradecard',`<div class="gn">${G.n}</div><div class="gt">СЫНЫП</div><div class="gc">${G.n===3?'9 ойын':k?k+' ойын':'жақында'}</div>`);
+  const b=el('button','gradecard',`<div class="gn">${G.n}</div><div class="gt">СЫНЫП</div><div class="gc">${G.n===3?'8 ойын':k?k+' ойын':'жақында'}</div>`);
   b.style.background=G.c;b.onclick=()=>{beep('tap');openGrade(G.n)};$('#grades').append(b)});
 /* жеке сілтеме: ?s=1 немесе /1/ — тек сол сынып ашылады */
 const LOCK=(()=>{const q=new URLSearchParams(location.search).get('s')||location.hash.replace('#','');const n=+q;return GRADES.some(g=>g.n===n)?n:null})();
