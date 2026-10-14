@@ -165,6 +165,27 @@ button{font-family:inherit;border:none;cursor:pointer;color:inherit;touch-action
 .rtext{font-size:clamp(18px,1.85vw,30px);font-weight:800;line-height:1.45;text-align:left}
 .rw{border-radius:6px;transition:background .2s}.rw.rd{background:#c9f2dc}
 .rtext.pick .rw{cursor:pointer}.rtext.pick .rw:hover{background:#ffe7a8}
+.lvpick{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}.lvpick .btn{font-size:clamp(22px,2.6vw,34px);padding:18px 30px}
+.dcard{text-align:left;padding:0;border:none}.dcard .top{border-radius:26px}
+.duel{display:flex;gap:14px;width:100%;flex:1;align-items:stretch}
+.dside{flex:1;min-width:0;border-radius:26px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:10px;border:6px solid}
+.dside.s0{background:rgba(255,90,95,.2);border-color:#ff5a5f}.dside.s1{background:rgba(26,111,181,.25);border-color:#1a6fb5}
+.dh{display:flex;justify-content:space-between;align-items:center;width:100%;color:#fff;font-weight:900;font-size:clamp(18px,2vw,28px)}
+.dclk{background:rgba(0,0,0,.25);border-radius:12px;padding:0 12px;font-variant-numeric:tabular-nums}
+.dside .tbox{gap:14px;max-width:none;flex:1;justify-content:center}
+.dside .q{font-size:clamp(26px,3.2vw,62px)}.dside .txt{font-size:clamp(15px,1.7vw,28px)}.dside .title{font-size:clamp(15px,1.7vw,28px)}
+.dside .panel{padding:8px 12px;border-radius:20px}.dside .opts{gap:8px}
+.dside .opt{min-width:70px;min-height:clamp(54px,5vw,84px);font-size:clamp(20px,2.5vw,44px);padding:6px 14px;border-radius:18px}.dside .opt.sm{font-size:clamp(14px,1.7vw,28px)}
+.dside .key{width:clamp(40px,4.2vw,80px);height:clamp(40px,3.8vw,70px);font-size:clamp(20px,2.4vw,36px);border-radius:14px}.dside .keys{gap:6px}
+.dside .disp{min-width:160px;height:clamp(48px,4.6vw,78px);font-size:clamp(28px,3vw,50px)}
+.dside .road,.dside .nline,.dside .venn,.dside .vbtns{width:100%}.dside .road{height:clamp(60px,6vw,90px)}.dside .car{font-size:clamp(30px,3vw,46px)}
+.dside .chest{font-size:clamp(40px,4vw,60px)}.dside .locks{font-size:clamp(18px,1.8vw,26px)}
+.dside .expr{font-size:clamp(26px,3.2vw,58px)}.dside .tok{padding:2px 10px}.dside .sl{font-size:clamp(15px,1.9vw,32px)}
+.dside .vcur{font-size:clamp(34px,3.4vw,56px);padding:4px 18px}.dside .vbt{font-size:clamp(11px,1.15vw,19px);padding:10px 4px}.dside .venn .vn{font-size:clamp(20px,2vw,34px)}.dside .venn .vi{font-size:clamp(18px,2vw,30px)}
+.dside .nline .lb{font-size:clamp(14px,1.3vw,20px)}.dside .howto2{font-size:13px}
+.ddone{font-size:clamp(30px,3vw,52px);font-weight:900;color:#fff;text-align:center;margin-top:30px;text-shadow:0 3px 0 rgba(0,0,0,.2)}
+.ddone small{font-size:.55em}
+@media(max-width:760px){.duel{flex-direction:column}}
 /* final */
 #final{position:fixed;inset:0;background:rgba(8,40,70,.6);display:none;align-items:center;justify-content:center;z-index:20;padding:16px}
 #final.on{display:flex}
@@ -254,7 +275,7 @@ function keypad(box,onSubmit){let val='';const d=el('div','disp',' '),k=el('div'
   const upd=()=>{d.textContent=val?(+val).toLocaleString('ru-RU'):' '};
   const press=x=>{beep('tap');if(x==='⌫')val=val.slice(0,-1);else if(x==='✔'){if(val){const v=+val;val='';upd();onSubmit(v,d)}return}else if(val.length<7)val+=x;upd()};
   ['1','2','3','4','5','⌫','6','7','8','9','0','✔'].forEach(x=>{const b=el('button','key'+(x==='✔'?' ok':x==='⌫'?' del':''),x);b.onclick=()=>press(x);k.append(b)});
-  const kd=e=>{if(!document.body.contains(d))return document.removeEventListener('keydown',kd);if(/^\d$/.test(e.key))press(e.key);else if(e.key==='Backspace')press('⌫');else if(e.key==='Enter')press('✔')};
+  const kd=e=>{if(!document.body.contains(d))return document.removeEventListener('keydown',kd);if(window.DUEL)return;if(/^\d$/.test(e.key))press(e.key);else if(e.key==='Backspace')press('⌫');else if(e.key==='Enter')press('✔')};
   document.addEventListener('keydown',kd)}
 
 /* ===== engine ===== */
@@ -274,7 +295,7 @@ function finish(id,err,msg){if(!alive(id))return;RID++;const s=err===0?3:err<=2?
   if(l<2){const b=el('button','btn g',`Келесі деңгей ➜`);b.onclick=()=>play(g,l+1);r.append(b)}
   const a=el('button','btn','🔁 Қайтадан');a.onclick=()=>play(g,l);const m=el('button','btn','🗺️ Карта');m.onclick=goHome;r.append(a,m);
   $('#final').classList.add('on');beep('win');confetti()}
-function goHome(){RID++;stopCF();$('#final').classList.remove('on');drawHome();show('home')}
+function goHome(){RID++;window.DUEL=false;stopCF();$('#final').classList.remove('on');drawHome();show('home')}
 
 /* ===== DATA ===== */
 const POS={z:['кітап','мектеп','бала','қала','ағаш','терезе','дәптер','өзен','тау','мұғалім','қарындаш','гүл','құс','үстел'],
@@ -519,7 +540,33 @@ function drawHome(){const gr=$('#groups');gr.innerHTML='';let tot=0;
       const c=el('div','card',`<div class="top"><div class="ic">${g.icon}</div><div><div class="t">${g.title}</div><div class="s">${g.sub}</div></div></div>`);c.querySelector('.top').style.cssText=`--c1:${g.c1};--c2:${g.c2}`;
       const lv=el('div','lvls');[0,1,2].forEach(l=>{const lock=false;const b=el('button','lv'+(lock?' lock':''),`${LV[l]}<span class="st">${lock?'🔒':'⭐'.repeat(sv[l])+'☆'.repeat(3-sv[l])}</span>`);
         b.onclick=()=>{if(lock){flash('Алдымен алдыңғы деңгейді өт 🙂');return}beep('tap');play(g,l)};lv.append(b)});c.append(lv);cs.append(c)})});
+  const ds=el('div','sec',`<h2>⚔️ Екі оқушы жарысы <small style="font-size:.6em;opacity:.9">· математика</small></h2>`),dc=el('div','cards');ds.append(dc);gr.prepend(ds);
+  GAMES.filter(g=>g.sec===0).forEach(g=>{const c=el('button','card dcard',`<div class="top"><div class="ic">${g.icon}</div><div><div class="t">${g.title}</div><div class="s">⚔️ 2 оқушы · деңгейді өздерің таңдаңдар</div></div></div>`);
+    c.querySelector('.top').style.cssText=`--c1:${g.c1};--c2:${g.c2}`;c.onclick=()=>{beep('tap');duelMenu(g)};dc.append(c)});
   $('#total').textContent=`⭐ ${tot} / ${GAMES.length*9}`}
+
+/* ===== 2 оқушы жарысы ===== */
+const DUEL_N={tr:5,sp:5,br:5,rd:6,un:6,ce:3,vn:2};
+function duelMenu(g){RID++;stopCF();$('#final').classList.remove('on');window.DUEL=false;$('#gt').textContent=`⚔️ ${g.icon} ${g.title}`;show('game');const st=$('#stage');st.innerHTML='';
+  st.append(el('div','title',`⚔️ Екі оқушы жарысы<br><small style="font-size:.6em">Әрқайсыңа ${DUEL_N[g.id]||5} тапсырма. Кім тез әрі қатесіз шешеді?<br>Әр қате үшін +5 секунд</small>`),el('div','title','Деңгейді таңдаңдар:'));
+  const r=el('div','lvpick');[0,1,2].forEach(l=>{const b=el('button','btn',LV[l]);b.onclick=()=>duel(g,l);r.append(b)});st.append(r)}
+function duel(g,l){RID++;const id=RID;stopCF();$('#final').classList.remove('on');CUR=g;CL=l;window.DUEL=true;$('#gt').textContent=`⚔️ ${g.icon} ${g.title} · ${LV[l]}`;show('game');
+  const st=$('#stage');st.innerHTML='';const wrap=el('div','duel');st.append(wrap);const N=DUEL_N[g.id]||5,t0=performance.now(),res=[null,null];let iv;
+  const fmtT=t=>t.toFixed(1);
+  const check=()=>{if(!res[0]||!res[1])return;clearInterval(iv);setTimeout(()=>{if(!alive(id))return;RID++;window.DUEL=false;
+    const w=res[0].score<res[1].score?0:res[1].score<res[0].score?1:-1,name=i=>i?'🔵 2-оқушы':'🔴 1-оқушы';
+    $('#fst').textContent=w<0?'🤝':'🏆';$('#fh').textContent=w<0?'Тең түсті!':name(w)+' жеңді!';
+    $('#fp').innerHTML=[0,1].map(i=>`${name(i)}: ${fmtT(res[i].tm)} сек, қате ${res[i].err} → <b>${fmtT(res[i].score)}</b>`).join('<br>')+'<br><small>(әр қате +5 сек)</small>';
+    const r=$('#frow');r.innerHTML='';const a=el('button','btn g','🔁 Қайтадан');a.onclick=()=>duel(g,l);const b=el('button','btn','Деңгей таңдау');b.onclick=()=>duelMenu(g);const m=el('button','btn','🗺️ Карта');m.onclick=goHome;r.append(a,b,m);
+    $('#final').classList.add('on');beep('win');confetti()},700)};
+  const sides=[0,1].map(si=>{const tasks=g.make(l).slice(0,N);let i=0,err=0;
+    const side=el('div','dside s'+si,`<div class="dh"><b>${si?'🔵 2-оқушы':'🔴 1-оқушы'}</b><span class="dclk">0.0</span></div><div class="dots"></div><div class="tbox"></div>`);wrap.append(side);
+    const dots=side.querySelector('.dots'),box=side.querySelector('.tbox'),clk=side.querySelector('.dclk');
+    const step=()=>{if(!alive(id))return;dots.innerHTML='';tasks.forEach((_,j)=>dots.append(el('i',j<i?'d':j===i?'c':'')));box.innerHTML='';
+      if(i>=N){const tm=(performance.now()-t0)/1000;res[si]={tm,err,score:tm+err*5};clk.textContent=fmtT(tm);box.innerHTML=`<div class="ddone">🏁<br>${fmtT(tm)} сек<br><small>Қате: ${err}</small></div>`;beep('ok');check();return}
+      let fired=false;g.render(tasks[i],box,()=>{if(fired||!alive(id))return;fired=true;beep('ok');i++;setTimeout(step,(g.delay||900)-200)},()=>{err++},id,i,N)};
+    step();return{clk,si}});
+  iv=setInterval(()=>{if(!alive(id))return clearInterval(iv);const t=(performance.now()-t0)/1000;sides.forEach(x=>{if(!res[x.si])x.clk.textContent=fmtT(t)})},100)}
 drawHome();
 </script>
 </body>
