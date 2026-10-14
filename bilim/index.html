@@ -541,7 +541,7 @@ function drawHome(){const gr=$('#groups');gr.innerHTML='';let tot=0;
       const lv=el('div','lvls');[0,1,2].forEach(l=>{const lock=false;const b=el('button','lv'+(lock?' lock':''),`${LV[l]}<span class="st">${lock?'🔒':'⭐'.repeat(sv[l])+'☆'.repeat(3-sv[l])}</span>`);
         b.onclick=()=>{if(lock){flash('Алдымен алдыңғы деңгейді өт 🙂');return}beep('tap');play(g,l)};lv.append(b)});c.append(lv);cs.append(c)})});
   const ds=el('div','sec',`<h2>⚔️ Екі оқушы жарысы <small style="font-size:.6em;opacity:.9">· математика</small></h2>`),dc=el('div','cards');ds.append(dc);gr.prepend(ds);
-  GAMES.filter(g=>g.sec===0).forEach(g=>{const c=el('button','card dcard',`<div class="top"><div class="ic">${g.icon}</div><div><div class="t">${g.title}</div><div class="s">⚔️ 2 оқушы · деңгейді өздерің таңдаңдар</div></div></div>`);
+  GAMES.filter(g=>g.sec===0).forEach(g=>{const c=el('button','card dcard',`<div class="top"><div class="ic">${g.icon}</div><div><div class="t">${g.title}</div><div class="s">⚔️ 2 оқушы</div></div></div>`);
     c.querySelector('.top').style.cssText=`--c1:${g.c1};--c2:${g.c2}`;c.onclick=()=>{beep('tap');duelMenu(g)};dc.append(c)});
   $('#total').textContent=`⭐ ${tot} / ${GAMES.length*9}`}
 
