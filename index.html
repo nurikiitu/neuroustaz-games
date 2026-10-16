@@ -85,6 +85,18 @@ button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation;
 .chip{background:#fff;border-radius:12px;padding:4px 14px;font-size:34px;font-weight:900}
 .tile.picked{box-shadow:0 0 0 9px #fdd835}
 .tile.wide{font-size:48px}
+.qbig{background:#fff;color:var(--ink);border-radius:28px;padding:22px 40px;font-size:clamp(44px,6vw,96px);font-weight:900;text-align:center;box-shadow:0 8px 0 rgba(0,0,0,.18);max-width:92vw;line-height:1.2}
+.qbig.sm{font-size:clamp(30px,3.6vw,58px)}
+.qbig .blank{display:inline-block;min-width:1.6em;border-bottom:8px solid var(--yellow);margin:0 4px;background:#e3ebf7;border-radius:10px 10px 0 0;color:#e53935}
+.qbig .blank.filled{background:none}
+.tile.okt{background:#43a047;color:#fff}
+.sline{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:flex-end;max-width:94vw}
+.wslot{min-width:150px;height:96px;padding:0 18px;border-radius:18px;border:5px dashed rgba(255,255,255,.85);display:grid;place-items:center;font-size:44px;font-weight:900;color:#fff}
+.wslot.filled{border:5px solid #fff;background:#fff;color:var(--ink)}.wslot.next{box-shadow:0 0 0 7px rgba(253,216,53,.7)}
+.sline .dot{font-size:70px;color:#fff;line-height:1}
+.bl small{font-size:.65em;opacity:.9}
+@media(max-width:700px){.qbig{padding:12px 18px}.wslot{min-width:70px;height:52px;font-size:22px;border-width:3px}}
+
 .eq.conv{font-size:clamp(56px,5vw,84px);flex-wrap:wrap;justify-content:center}
 .box.wide{width:auto;min-width:220px;padding:0 20px;font-size:.85em}
 .grades{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;padding:40px clamp(16px,4vw,80px);max-width:1600px;margin:0 auto;width:100%}
@@ -733,22 +745,109 @@ function restart(){startGame(S.game)}
 function goHome(){token++;stopConfetti();$('#final').classList.remove('show');show('home');if(S.game&&S.game.grade)openGrade(S.game.grade)}
 function toggleFS(){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()}
 
+/* ---------- 3-сынып · қазақ тілі ---------- */
+function chooseGame(c){return{...c,make:c.make,
+  render(t,st,done){
+    st.append(el('div','task-title',t.t||c.q));
+    const pr=el('div','qbig'+(t.small?' sm':''),t.p);st.append(pr);
+    const tiles=el('div','tiles');let over=false;
+    shuffle(t.o).forEach(o=>{const b=el('button','tile wide',t.lab?t.lab(o):o);
+      b.onclick=()=>{if(over)return;if(o!==t.a)return wrong(b);over=true;beep('tap');b.classList.add('okt');
+        const bl=pr.querySelector('.blank');if(bl){bl.textContent=t.fill||o;bl.className='blank filled';popIn(bl)}done()};tiles.append(b)});
+    st.append(tiles);st.append(el('div','howto','👆 Дұрыс жауапты бас'));
+  }}}
+const BL='<span class="blank">&nbsp;</span>';
+const K3={
+ pos:{z:['ҚАЛАМ','МҰҒАЛІМ','ҮЙ','ДОС','ҚАЛА','АҒАШ','ДӘПТЕР','ӘЖЕ','ТЕРЕЗЕ','ҚҰС','ОҚУШЫ','ӨЗЕН'],
+      s:['ӘДЕМІ','ҮЛКЕН','ҚЫЗЫЛ','БИІК','ТӘТТІ','КЕҢ','АҚЫЛДЫ','ЖЫЛЫ','СУЫҚ','ЖАСЫЛ','КІШКЕНТАЙ','ЕҢБЕКҚОР'],
+      e:['ЖАЗДЫ','ОҚЫДЫ','КЕЛДІ','ЖҮГІРДІ','ОЙНАДЫ','САЛДЫ','ЖЕДІ','КӨРДІ','ҰШТЫ','СӨЙЛЕДІ','БАРАДЫ','ӘНДЕТТІ']},
+ root:[['БАЛАЛАР','БАЛА'],['ГҮЛДЕР','ГҮЛ'],['ЖҰМЫСШЫ','ЖҰМЫС'],['ТАУЛЫ','ТАУ'],['КІТАПХАНА','КІТАП'],['ДОСТАРЫМ','ДОС'],['ЕГІНШІ','ЕГІН'],
+   ['БАЛЫҚШЫ','БАЛЫҚ'],['ҚАЛАДАН','ҚАЛА'],['ДӘПТЕРІМ','ДӘПТЕР'],['МЕКТЕПКЕ','МЕКТЕП'],['ОРМАНДА','ОРМАН'],['АҚЫЛДЫ','АҚЫЛ'],['ТҰЗСЫЗ','ТҰЗ'],['ҮЙІМІЗ','ҮЙ'],['ЖОЛДАС','ЖОЛ']],
+ plur:[['ҚАЛА','ЛАР'],['ТЕРЕЗЕ','ЛЕР'],['ТАУ','ЛАР'],['ҮЙ','ЛЕР'],['ҚҰС','ТАР'],['КІТАП','ТАР'],['МЕКТЕП','ТЕР'],['ДӘПТЕР','ЛЕР'],['ГҮЛ','ДЕР'],
+   ['ҚАЛАМ','ДАР'],['ОРМАН','ДАР'],['КӨЗ','ДЕР'],['ҚАЗ','ДАР'],['ДОС','ТАР'],['ЕСІК','ТЕР'],['ӘЖЕ','ЛЕР'],['ӨЗЕН','ДЕР'],['ТАС','ТАР'],['ҚОЛ','ДАР'],['ТІС','ТЕР'],['ҚЫЗ','ДАР'],['ІНІ','ЛЕР']],
+ syn:[['ӘДЕМІ','СҰЛУ'],['ЖЫЛДАМ','ТЕЗ'],['БАТЫЛ','ЖҮРЕКТІ'],['ҮЛКЕН','ЗОР'],['АҚЫЛДЫ','ДАНА'],['ҚУАНЫШ','ШАТТЫҚ'],['ДОС','ЖОЛДАС'],
+   ['АСПАН','КӨК'],['ЖҮЗ','БЕТ'],['ТАМАҚ','АС'],['АДАЛ','ШЫНШЫЛ'],['ЖАУЫН','ЖАҢБЫР']],
+ ant:[['ҮЛКЕН','КІШІ'],['ЫСТЫҚ','СУЫҚ'],['ҰЗЫН','ҚЫСҚА'],['АҚ','ҚАРА'],['ЖАС','КӘРІ'],['КЕҢ','ТАР'],['БИІК','АЛАСА'],['АШЫҚ','ЖАБЫҚ'],
+   ['ЖАҚЫН','АЛЫС'],['АУЫР','ЖЕҢІЛ'],['ТӘТТІ','АЩЫ'],['КӨП','АЗ'],['ЕРТЕ','КЕШ'],['ЖАҚСЫ','ЖАМАН'],['ЖЫЛДАМ','БАЯУ'],['БАЙ','КЕДЕЙ'],['ҚУАНЫШ','ҚАЙҒЫ']],
+ syl:['БА-ЛА-ЛАР','МЕК-ТЕП','ДӘП-ТЕР','ҚА-ЛАМ','КІ-ТАП','ТЕ-РЕ-ЗЕ','ОР-МАН','СӘ-БІЗ','АЛ-МА','ЖАҢ-БЫР','ТҮЛ-КІ','БҮР-КІТ','ҚАР-ЛЫ-ҒАШ',
+   'МҰ-ҒА-ЛІМ','О-ҚУ-ШЫ','А-ҒАШ','ҚА-РЫН-ДАШ','СА-ҒАТ','Ө-ЗЕН','КӨ-БЕ-ЛЕК','ТЫШ-ҚАН','ЖҰЛ-ДЫЗ','О-РЫН-ДЫҚ','ҚАР-БЫЗ','А-РЫС-ТАН'],
+ punc:[['Біз мектепке бардық','.'],['Күз келді','.'],['Апам нан пісірді','.'],['Қазақстан – менің Отаным','.'],['Ағаштың жапырағы сарғайды','.'],['Құстар жылы жаққа ұшты','.'],
+   ['Сен қайда барасың','?'],['Бұл кімнің кітабы','?'],['Сабақ қашан басталады','?'],['Сенің атың кім','?'],['Ертең мектепке барасың ба','?'],['Неге жылап тұрсың','?'],
+   ['Қандай әдемі гүл','!'],['Ура, біз жеңдік','!'],['Пай-пай, қандай тәтті алма','!'],['Жасасын, Тәуелсіз Қазақстан','!'],['Қандай керемет күн','!'],['Абайла, жол тайғақ','!']],
+ sept:[['Мен мектеп_ барамын.','қайда?','ке',0],['Біз ауыл_ бардық.','қайда?','ға',0],['Ол қала_ кетті.','қайда?','ға',0],['Әкем жұмыс_ кетті.','қайда?','қа',0],
+   ['Құс ағаш_ қонды.','қайда?','қа',0],['Мен дүкен_ бардым.','қайда?','ге',0],['Ол үй_ келді.','қайда?','ге',0],
+   ['Кітап үстел_ жатыр.','қайда?','де',1],['Балалар аула_ ойнап жүр.','қайда?','да',1],['Біз сынып_ отырмыз.','қайда?','та',1],['Балық көл_ жүзеді.','қайда?','де',1],
+   ['Атам бақ_ жүр.','қайда?','та',1],['Ол мектеп_ оқиды.','қайда?','те',1],['Құс ұя_ отыр.','қайда?','да',1],
+   ['Ол мектеп_ келді.','қайдан?','тен',2],['Біз ауыл_ қайттық.','қайдан?','дан',2],['Құс ағаш_ ұшты.','қайдан?','тан',2],['Мен дүкен_ шықтым.','қайдан?','нен',2],
+   ['Апам базар_ келді.','қайдан?','дан',2],['Әкем жұмыс_ келді.','қайдан?','тан',2],['Ол қала_ келді.','қайдан?','дан',2]],
+ sentence:['Біз мектепке барамыз','Мен кітап оқыдым','Бала доп ойнады','Апам дәмді нан пісірді','Құстар жылы жаққа ұшты','Мысық сүт ішті',
+   'Айгүл гүлге су құйды','Ағаштың жапырағы сарғайды','Атам бақта жұмыс істейді','Қыста қалың қар жауады']
+};
+const SEPT_O=[['ке','ге','қа','ға'],['да','де','та','те'],['дан','ден','тан','тен','нан','нен']];
+const SEPT_N=['Барыс септік','Жатыс септік','Шығыс септік'];
+const U1=['','бір','екі','үш','төрт','бес','алты','жеті','сегіз','тоғыз'],T1=['','он','жиырма','отыз','қырық','елу','алпыс','жетпіс','сексен','тоқсан'];
+const numKz=n=>{const h=Math.floor(n/100),t=Math.floor(n%100/10),u=n%10;return[h?(h>1?U1[h]+' ':'')+'жүз':'',T1[t],U1[u]].filter(Boolean).join(' ')};
+const others=(arr,ans,k)=>pick([...new Set(arr)].filter(x=>x!==ans),k);
+
+GAMES.push(
+sortGame({ id:'k3pos', grade:3, title:'Сөз таптары', icon:'🧩', bg:'#c5e1a5', sub:'Зат есім, сын есім, етістік', wide:true,
+  q:'Сөздерді сөз табына қарай сұрыпта', n:5, per:2, pool:K3.pos,
+  bins:[{k:'z',label:'Зат есім<br><small>кім? не?</small>',color:'#1e88e5'},{k:'s',label:'Сын есім<br><small>қандай?</small>',color:'#e53935'},{k:'e',label:'Етістік<br><small>не істеді?</small>',color:'#43a047'}]}),
+chooseGame({ id:'k3root', grade:3, title:'Түбірді тап', icon:'🌱', bg:'#dcedc8', sub:'Сөз құрамы: түбір мен қосымша', q:'Сөздің түбірі қайсы?',
+  make:()=>pick(K3.root,8).map(([w,r])=>{const pre=[];for(let i=2;i<=w.length;i++)if(w.slice(0,i)!==r)pre.push(w.slice(0,i));
+    pre.sort((x,y)=>Math.abs(x.length-r.length)-Math.abs(y.length-r.length));return{p:w,a:r,o:[r,...pre.slice(0,3)]}})}),
+chooseGame({ id:'k3plur', grade:3, title:'Көптік жалғау', icon:'👨‍👩‍👧‍👦', bg:'#ffe0b2', sub:'-лар, -лер, -дар, -дер, -тар, -тер', q:'Көптік жалғауын дұрыс жалға',
+  make:()=>pick(K3.plur,10).map(([w,a])=>({p:w+BL,a,o:['ЛАР','ЛЕР','ДАР','ДЕР','ТАР','ТЕР']}))}),
+chooseGame({ id:'k3syn', grade:3, title:'Мәндес сөздер', icon:'🤝', bg:'#b2dfdb', sub:'Синонимдер: мағынасы жақын сөз', q:'Мағынасы жақын сөзді тап',
+  make:()=>pick(K3.syn,8).map(([w,a])=>({p:w+' = ?',a,o:[a,...others(K3.syn.map(x=>x[1]),a,3)]}))}),
+chooseGame({ id:'k3ant', grade:3, title:'Қарама-қарсы сөздер', icon:'☯️', bg:'#f8bbd0', sub:'Антонимдер: мағынасы қарама-қарсы', q:'Мағынасы қарама-қарсы сөзді тап',
+  make:()=>pick(K3.ant,8).map(([w,a])=>({p:w+' ↔ ?',a,o:[a,...others(K3.ant.map(x=>x[1]),a,3)]}))}),
+chooseGame({ id:'k3syl', grade:3, title:'Буынға бөл', icon:'✂️', bg:'#d1c4e9', sub:'Сөзді буынға дұрыс бөл', q:'Сөзді буынға дұрыс бөл',
+  make:()=>pick(K3.syl,8).map(s=>{const w=s.replace(/-/g,''),cut=[];let k=0;for(const ch of s){if(ch==='-')cut.push(k);else k++}
+    const wr=new Set();for(let i=0;i<cut.length;i++)for(const d of[-1,1]){const c=cut.slice();c[i]+=d;if(c[i]<=0||c[i]>=w.length||(i&&c[i]<=c[i-1])||(i<c.length-1&&c[i]>=c[i+1]))continue;
+      let o='',p=0;c.forEach(x=>{o+=w.slice(p,x)+'-';p=x});o+=w.slice(p);if(o!==s)wr.add(o)}
+    return{p:w,a:s,o:[s,...pick([...wr],2)]}})}),
+chooseGame({ id:'k3punc', grade:3, title:'Сөйлем түрлері', icon:'❓', bg:'#fff59d', sub:'Хабарлы, сұраулы, лепті сөйлем', q:'Сөйлемнің соңына қандай белгі қойылады?',
+  make:()=>shuffle([...pick(K3.punc.filter(x=>x[1]==='.'),3),...pick(K3.punc.filter(x=>x[1]==='?'),3),...pick(K3.punc.filter(x=>x[1]==='!'),3)])
+    .map(([s,a])=>({p:s+BL,a,o:['.','?','!'],small:1,lab:o=>({'.':'. хабарлы','?':'? сұраулы','!':'! лепті'})[o]}))}),
+chooseGame({ id:'k3sept', grade:3, title:'Септік жалғаулары', icon:'📍', bg:'#b3e5fc', sub:'Барыс, жатыс, шығыс септігі', q:'Дұрыс жалғауды таңда',
+  make:()=>shuffle([0,1,2].flatMap(g=>pick(K3.sept.filter(x=>x[3]===g),3))).map(([s,q,a,g])=>({t:SEPT_N[g]+' <small>('+q+')</small>',p:s.replace('_',BL),a,o:SEPT_O[g],small:1}))}),
+chooseGame({ id:'k3num', grade:3, title:'Сан есім', icon:'🔢', bg:'#ffccbc', sub:'Санды сөзбен оқы', q:'Сан қалай жазылады?',
+  make:()=>Array.from({length:8},(_,i)=>{const n=i<4?rnd(11,99):rnd(101,999),r=+String(n).split('').reverse().join('');
+    const o=[...new Set([r,n+10,n-10,n+1,n-1,n+100].filter(x=>x>10&&x<1000&&x!==n).map(numKz))].filter(x=>x!==numKz(n));return{p:String(n),a:numKz(n),o:[numKz(n),...pick(o,3)]}})}),
+{ id:'k3sent', grade:3, title:'Сөйлем құра', icon:'🧱', bg:'#cfd8dc', sub:'Сөздерден сөйлем құра',
+  make:()=>pick(K3.sentence,8),
+  render(s,st,done){st.append(el('div','task-title','Сөздерді ретімен қойып, сөйлем құра'));
+    const ws=s.split(' '),line=el('div','sline'),sl=ws.map(()=>{const x=el('div','wslot drop');line.append(x);return x});line.append(el('b','dot','.'));st.append(line);
+    let f=0;const mark=()=>sl.forEach((x,i)=>x.classList.toggle('next',i===f));mark();
+    const fill=(i,w,b)=>{beep('tap');sl[i].textContent=w;sl[i].className='wslot filled';popIn(sl[i]);b.classList.add('used');while(f<ws.length&&sl[f].classList.contains('filled'))f++;mark();if(f>=ws.length)done()};
+    let order=shuffle(ws.slice());for(let g=0;g<20&&order.join(' ')===s;g++)order=shuffle(ws.slice());
+    const tiles=el('div','tiles');order.forEach(w=>{const b=el('button','tile wide',w);
+      dragTile(b,()=>{w===ws[f]?fill(f,w,b):wrong(b)},t=>{const i=sl.indexOf(t);if(i<0||sl[i].classList.contains('filled'))return;w===ws[i]?fill(i,w,b):wrong(b)});tiles.append(b)});
+    st.append(tiles,el('div','howto','👆 Ұстап, орнына апар немесе ретімен бас'));}}
+);
+
 /* home: сыныптар */
 const GRADES=[{n:1,c:'#ef5350'},{n:2,c:'#ffa726'},{n:3,c:'#66bb6a'},{n:4,c:'#ab47bc'}];
 let curGrade=null;
 function showGrades(){curGrade=null;$('#grades').style.display='';$('#gradebar').style.display='none';$('#grid').innerHTML=''}
 function openGrade(n){curGrade=n;$('#grades').style.display='none';$('#gradebar').style.display='flex';$('#gname').textContent=n+'-СЫНЫП';
   const grid=$('#grid');grid.innerHTML='';const list=GAMES.filter(g=>g.grade===n);
-  if(n===3){const c=el('a','gcard',`<div class="ic" style="background:#d1c4e9">🚀</div><div class="t">Көбейту әлемі</div><div class="s">8 ойын: көбейту мен бөлу</div>`);c.href='https://nurikiitu.github.io/kobeytu-alemi/';c.style.textDecoration='none';c.style.color='inherit';grid.append(c)}
+  if(n===3){const c=el('a','gcard',`<div class="ic" style="background:#d1c4e9">🚀</div><div class="t">Көбейту әлемі</div><div class="s">Математика · 8 ойын: көбейту мен бөлу</div>`);c.href='kobeytu/'+(LOCK===3?'?l=1':'');c.style.textDecoration='none';c.style.color='inherit';grid.append(c)}
   else if(n===4&&!window.OS){const c=el('a','gcard',`<div class="ic" style="background:#b2ebf2">🏝️</div><div class="t">Білім аралы</div><div class="s">12 ойын: математика мен қазақ тілі, 3 деңгей</div>`);c.href='bilim/';c.style.textDecoration='none';c.style.color='inherit';grid.append(c)}
   else if(!list.length)grid.append(el('div','soon','🛠 Жақында ойындар қосылады!'));
   list.forEach(g=>{const c=el('button','gcard',`<div class="ic" style="background:${g.bg}">${g.icon}</div><div class="t">${g.title}</div><div class="s">${g.sub}</div>`);c.onclick=()=>{beep('tap');startGame(g)};grid.append(c)})}
-const GINFO={1:'Сауат ашу, математика',2:'Қазақ тілі, математика',3:'Көбейту әлемі',4:'Білім аралы'};
+const GINFO={1:'Сауат ашу, математика',2:'Қазақ тілі, математика',3:'Математика, қазақ тілі',4:'Білім аралы'};
 GRADES.forEach(G=>{const b=el('a','gradecard',`<div class="gn">${G.n}</div><div class="gt">СЫНЫП</div><div class="gc">${GINFO[G.n]}</div>`);
-  b.href=G.n+'/';b.style.textDecoration='none';b.style.background=G.c;b.onclick=()=>beep('tap');$('#grades').append(b)});
-/* жеке сілтеме: ?s=1 — тек сол сынып ашылады */
-const LOCK=(()=>{const q=new URLSearchParams(location.search).get('s')||location.hash.replace('#','');const n=+q;return GRADES.some(g=>g.n===n)?n:null})();
-if(LOCK)location.replace(LOCK+'/?l=1');
+  b.style.textDecoration='none';b.style.background=G.c;
+  if(G.n===3){b.href='#';b.onclick=e=>{e.preventDefault();beep('tap');openGrade(3)}}else{b.href=G.n+'/';b.onclick=()=>beep('tap')}
+  $('#grades').append(b)});
+/* жеке сілтеме: ?s=1 — тек сол сынып ашылады; ?g=3 — 3-сынып (құлыпсыз) */
+const QP=new URLSearchParams(location.search);
+const LOCK=(()=>{const q=QP.get('s')||location.hash.replace('#','');const n=+q;return GRADES.some(g=>g.n===n)?n:null})();
+if(LOCK&&LOCK!==3)location.replace(LOCK+'/?l=1');
+else if(LOCK===3){openGrade(3);$('#gradebar button').style.visibility='hidden';window.showGrades=()=>openGrade(3)}
+else if(QP.get('g')==='3')openGrade(3);
 </script>
 </body>
 </html>

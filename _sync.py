@@ -20,8 +20,9 @@ def class_site(src, salt_key):
 
 def kobeytu(src):
     s = open(src, encoding='utf-8').read()
-    s = s.replace('href="https://nurikiitu.github.io/neuroustaz-games/"', 'id="nuback" href="../"')
-    return s.replace('</head>', HIDE + '\n</head>', 1)
+    s = s.replace('href="https://nurikiitu.github.io/neuroustaz-games/"', 'id="nuback" href="../?g=3"')
+    fix = "<script>if(new URLSearchParams(location.search).get('l')){document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('nuback');b&&(b.href='../?s=3')})}</script>"
+    return s.replace('</head>', fix + '\n</head>', 1)
 
 def bilim(src):
     s = open(src, encoding='utf-8').read()
@@ -33,7 +34,7 @@ def bilim(src):
 
 JOBS = {'1': lambda: class_site(f'{UP}/1class/index.html', 'c1'),
         '2': lambda: class_site(f'{UP}/2class/index.html', 'c2'),
-        '3': lambda: kobeytu(f'{UP}/kobeytu-alemi/index.html'),
+        'kobeytu': lambda: kobeytu(f'{UP}/kobeytu-alemi/index.html'),
         '4': lambda: bilim(f'{UP}/bilim-araly/index.html')}
 for d, f in JOBS.items():
     out = f()
