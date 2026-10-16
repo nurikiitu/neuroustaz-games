@@ -34,7 +34,7 @@ def bilim(src):
 
 JOBS = {'1': lambda: class_site(f'{UP}/1class/index.html', 'c1'),
         '2': lambda: class_site(f'{UP}/2class/index.html', 'c2'),
-        'kobeytu': lambda: kobeytu(f'{UP}/kobeytu-alemi/index.html'),
+        # 'kobeytu': түпнұсқа сайт жабылды — ойынның негізгі нұсқасы осы репода, kobeytu/index.html
         '4': lambda: bilim(f'{UP}/bilim-araly/index.html')}
 for d, f in JOBS.items():
     out = f()
