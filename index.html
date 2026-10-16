@@ -743,12 +743,12 @@ function openGrade(n){curGrade=n;$('#grades').style.display='none';$('#gradebar'
   else if(n===4&&!window.OS){const c=el('a','gcard',`<div class="ic" style="background:#b2ebf2">🏝️</div><div class="t">Білім аралы</div><div class="s">12 ойын: математика мен қазақ тілі, 3 деңгей</div>`);c.href='bilim/';c.style.textDecoration='none';c.style.color='inherit';grid.append(c)}
   else if(!list.length)grid.append(el('div','soon','🛠 Жақында ойындар қосылады!'));
   list.forEach(g=>{const c=el('button','gcard',`<div class="ic" style="background:${g.bg}">${g.icon}</div><div class="t">${g.title}</div><div class="s">${g.sub}</div>`);c.onclick=()=>{beep('tap');startGame(g)};grid.append(c)})}
-GRADES.forEach(G=>{const k=GAMES.filter(g=>g.grade===G.n).length;
-  const b=el('button','gradecard',`<div class="gn">${G.n}</div><div class="gt">СЫНЫП</div><div class="gc">${G.n===3?'8 ойын':G.n===4&&!window.OS?(k+12)+' ойын':k?k+' ойын':'жақында'}</div>`);
-  b.style.background=G.c;b.onclick=()=>{beep('tap');openGrade(G.n)};$('#grades').append(b)});
-/* жеке сілтеме: ?s=1 немесе /1/ — тек сол сынып ашылады */
+const GINFO={1:'Сауат ашу, математика',2:'Қазақ тілі, математика',3:'Көбейту әлемі',4:'Білім аралы'};
+GRADES.forEach(G=>{const b=el('a','gradecard',`<div class="gn">${G.n}</div><div class="gt">СЫНЫП</div><div class="gc">${GINFO[G.n]}</div>`);
+  b.href=G.n+'/';b.style.textDecoration='none';b.style.background=G.c;b.onclick=()=>beep('tap');$('#grades').append(b)});
+/* жеке сілтеме: ?s=1 — тек сол сынып ашылады */
 const LOCK=(()=>{const q=new URLSearchParams(location.search).get('s')||location.hash.replace('#','');const n=+q;return GRADES.some(g=>g.n===n)?n:null})();
-if(LOCK){openGrade(LOCK);$('#gradebar button').style.visibility='hidden';window.showGrades=()=>openGrade(LOCK)}
+if(LOCK)location.replace(LOCK+'/?l=1');
 </script>
 </body>
 </html>
