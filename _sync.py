@@ -21,6 +21,7 @@ def class_site(src, salt_key):
 def kobeytu(src):
     s = open(src, encoding='utf-8').read()
     s = s.replace('href="https://nurikiitu.github.io/neuroustaz-games/"', 'id="nuback" href="../?g=3"')
+    s = s.replace('<div id="gate">', '<div id="gate" style="display:none!important">')  # көшірмеде код сұралмайды
     fix = "<script>if(new URLSearchParams(location.search).get('l')){document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('nuback');b&&(b.href='../?s=3')})}</script>"
     return s.replace('</head>', fix + '\n</head>', 1)
 
