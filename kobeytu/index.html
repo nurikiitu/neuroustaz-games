@@ -232,13 +232,13 @@ button{font-family:inherit;border:none;cursor:pointer;color:inherit;touch-action
 <body>
 <div id="gate"><form class="gbox" id="gf"><div style="font-size:72px">🚀</div><h2>Көбейту әлемі</h2><p>Кіру коды</p>
 <input id="gc" autocomplete="off" spellcheck="false" inputmode="numeric" placeholder="КОД"><button class="gbtn">Кіру ➜</button><div class="gerr" id="ge"></div></form></div>
-<script>
+<script>try{localStorage.removeItem('kb_ok')}catch(e){}
 (function(){const H=['986d17032762b2d95761a7d84d2ab28dc9dd1115d115042e1694b6517e450c3a'];
 const sha=async s=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('kobeytu:'+s.trim().toUpperCase()));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')};
 const g=document.getElementById('gate'),inp=document.getElementById('gc'),er=document.getElementById('ge');
-async function tryC(c){const h=await sha(c);if(H.includes(h)){try{localStorage.setItem('kb_ok',h)}catch(e){}g.style.display='none';return}er.textContent='Код қате. Қайта тексеріңіз.'}
+async function tryC(c){const h=await sha(c);if(H.includes(h)){try{sessionStorage.setItem('kb_ok',h)}catch(e){}g.style.display='none';return}er.textContent='Код қате. Қайта тексеріңіз.'}
 document.getElementById('gf').onsubmit=e=>{e.preventDefault();if(inp.value.trim())tryC(inp.value)};
-let ok=null;try{ok=localStorage.getItem('kb_ok')}catch(e){}const q=new URLSearchParams(location.search).get('code');
+let ok=null;try{ok=sessionStorage.getItem('kb_ok')}catch(e){}const q=new URLSearchParams(location.search).get('code');
 if(H.includes(ok))g.style.display='none';else if(q)tryC(q);else setTimeout(()=>inp.focus(),100);})();
 </script>
 
