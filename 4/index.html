@@ -165,6 +165,7 @@ button{font-family:inherit;border:none;cursor:pointer;color:inherit;touch-action
 .rbox h3{text-align:center;color:var(--org);font-size:clamp(24px,2.6vw,38px);margin-bottom:4px}
 .rtext{font-size:clamp(18px,1.85vw,30px);font-weight:800;line-height:1.45;text-align:left}
 .rw{border-radius:6px;transition:background .2s}.rw.rd{background:#c9f2dc}
+.rw.last{background:#22b07d!important;color:#fff}
 .rtext.pick .rw{cursor:pointer}.rtext.pick .rw:hover{background:#ffe7a8}
 .lvpick{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}.lvpick .btn{font-size:clamp(22px,2.6vw,34px);padding:18px 30px}
 .dcard{text-align:left;padding:0;border:none}.dcard .top{border-radius:26px}
@@ -256,6 +257,9 @@ function confetti(){const my=++CF,c=$('#cf'),x=c.getContext('2d');c.width=innerW
 
 /* ===== access code ===== */
 const GH=["d89a83dad812e7e7a5a641eabcd7ab22e393b0706d5bd6b60e136860681f0195", "0b8d6fc03072694736c3a6576575ff6f81ec27856594cfcabdbdb644ad3da965", "4a268e6b0c1a908eadd47f5453728c85e036d4cefb7e8b31e300b353a4397fc5"];
+const TMP={'1257eff4e6550c87a78d08e4e10770d3923c6da0a53164795ac013aa10cb6119':1792247064316};for(const k in TMP)if(Date.now()<TMP[k])GH.push(k);
+setInterval(()=>{let o=null;try{o=localStorage.getItem('ba_ok')}catch(e){}if(TMP[o]&&Date.now()>=TMP[o]){try{localStorage.removeItem('ba_ok')}catch(e){}location.reload()}},20000);
+
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('bilimaraly:'+s.trim().toUpperCase()));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 async function tryCode(c){{const h=await sha(c);if(GH.includes(h)){try{localStorage.setItem('ba_ok',h)}catch(e){}$('#gate').classList.add('off');return true}$('#ge').textContent='Код қате. Қайта тексеріңіз.';reanim($('#gc'),'shake');return false}}
 function logout(){try{localStorage.removeItem('ba_ok')}catch(e){}location.href=location.pathname}
@@ -516,11 +520,17 @@ const GAMES=[
      const box=el('div','rbox',`<h3>${T.t}</h3>`),p=el('p','rtext');box.append(p);const spans=words.map((w,i)=>{const s=el('span','rw',w+' ');p.append(s);return s});
      const hint=el('div','title',''),fin=el('button','btn o','ОҚЫП БОЛДЫМ ✅');fin.style.cssText='font-size:26px;padding:14px 30px';st.append(top,box,hint,fin);
      const result=(n,sec)=>{const wpm=Math.round(n*60/sec),s3=wpm>=90?0:wpm>=70?1:3;
-       done(s3,`Сен минутына <b>${wpm} сөз</b> оқыдың!<br><small>4-сынып үшін жақсы нәтиже — минутына 90 сөз және одан көп</small>`)};
-     fin.onclick=()=>{if(over)return;over=true;clearInterval(iv);const sec=Math.max(1,(performance.now()-t0)/1000);spans.forEach(s=>s.classList.add('rd'));setTimeout(()=>result(words.length,Math.min(60,sec)),600)};
+       done(s3,`Сен ${sec} секундта <b>${n} сөз</b> оқыдың!`+(sec<60?`<br>Бұл — минутына <b>${wpm} сөз</b>`:'')+`<br><small>4-сынып үшін жақсы нәтиже — минутына 90 сөз және одан көп</small>`)};
+     /* тоқтағанда мұғалім оқушы тоқтаған соңғы сөзді басады → сөз саны */
+     const stop=(m)=>{if(over)return;over=true;clearInterval(iv);fin.remove();const sec=Math.max(1,Math.min(60,Math.round((performance.now()-t0)/1000)));p.classList.add('pick');
+       hint.innerHTML=`${m} · <b>${sec} сек</b><br><span style="color:#ffc233">Мұғалім: оқушы тоқтаған соңғы сөзді басыңыз</span> 👆`;
+       const pan=el('div','');pan.style.cssText='display:flex;align-items:center;justify-content:center;gap:18px;margin:8px auto 0;background:#fff;border-radius:20px;padding:8px 22px;width:fit-content;box-shadow:0 6px 20px #0003';
+       const cnt=el('div','','— сөз');cnt.style.cssText='font-size:32px;font-weight:900;color:#1b9e6a;min-width:130px;text-align:center';const ok=el('button','btn g','НӘТИЖЕ ✅');ok.style.cssText='font-size:24px;padding:12px 26px';pan.append(cnt,ok);st.append(pan);let N=0;
+       spans.forEach((s,i)=>s.onclick=()=>{beep('ok');N=i+1;spans.forEach((x,j)=>{x.classList.toggle('rd',j<i);x.classList.toggle('last',j===i)});cnt.textContent=N+' сөз'});
+       ok.onclick=()=>{if(!N){cnt.textContent='👆 сөзді бас';return}p.classList.remove('pick');result(N,sec)}};
+     fin.onclick=()=>stop('✅ Оқып болдым');
      iv=setInterval(()=>{if(!alive(id))return clearInterval(iv);const left=Math.max(0,60-(performance.now()-t0)/1000);tm.firstChild.style.width=left/60*100+'%';clk.textContent=Math.ceil(left);clk.classList.toggle('warn',left<=10);
-       if(left<=0&&!over){over=true;clearInterval(iv);beep('bad');fin.remove();hint.innerHTML='⏰ Уақыт бітті! <span style="color:#ffc233">Соңғы оқыған сөзіңді бас</span> 👆';p.classList.add('pick');
-         spans.forEach((s,i)=>s.onclick=()=>{beep('ok');spans.forEach((x,j)=>x.classList.toggle('rd',j<=i));p.classList.remove('pick');hint.textContent=`${i+1} сөз ✅`;setTimeout(()=>result(i+1,60),900)})}},200)}}},
+       if(left<=0&&!over){beep('bad');stop('⏰ Уақыт бітті')}},200)}}},
 
 /* 9. Synonym / antonym */
 {id:'sa',sec:1,icon:'↔️',title:'Синоним – антоним',sub:'Құлап жатқан сөздерді сұрыпта',c1:'#2bb0d6',c2:'#7b5cff',

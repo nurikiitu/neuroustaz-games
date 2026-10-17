@@ -1150,7 +1150,7 @@ function showGrades(){curGrade=null;$('#grades').style.display='';$('#gradebar')
 function openGrade(n){curGrade=n;$('#grades').style.display='none';$('#gradebar').style.display='flex';$('#gname').textContent=n+'-СЫНЫП';
   const grid=$('#grid');grid.innerHTML='';const list=GAMES.filter(g=>g.grade===n&&!g.inDuel);
   if(n===2){const c=el('button','gcard duelcard',`<div class="ic">⚔️</div><div class="t">2 оқушы жарысы</div><div class="s">🪢 Арқан тартыс · 🚀 Ракета · 🏎️ Көлік жарысы · 🏇 Бәйге</div>`);c.onclick=()=>{beep('tap');openDuels()};grid.append(c)}
-  if(n===3){const c=el('a','gcard',`<div class="ic" style="background:#d1c4e9">🚀</div><div class="t">Көбейту әлемі</div><div class="s">8 ойын: көбейту мен бөлу</div>`);c.href='../kobeytu/';c.style.textDecoration='none';c.style.color='inherit';grid.append(c)}
+  if(n===3){const c=el('a','gcard',`<div class="ic" style="background:#d1c4e9">🚀</div><div class="t">Көбейту әлемі</div><div class="s">8 ойын: көбейту мен бөлу</div>`);c.href='https://nurikiitu.github.io/neuroustaz-games/kobeytu/';c.style.textDecoration='none';c.style.color='inherit';grid.append(c)}
   else if(!list.length)grid.append(el('div','soon','🛠 Жақында ойындар қосылады!'));
   list.forEach(g=>{const c=el('button','gcard',`<div class="ic" style="background:${g.bg}">${g.icon}</div><div class="t">${g.title}</div><div class="s">${g.sub}</div>`);c.onclick=()=>{beep('tap');startGame(g)};grid.append(c)})}
 GRADES.forEach(G=>{const k=GAMES.filter(g=>g.grade===G.n).length;
