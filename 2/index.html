@@ -1088,10 +1088,24 @@ function genMass(){const k=rnd(0,5);
   const v=new Set();while(v.size<3)v.add([rnd(1,3)*100,rnd(1,19)*10,rnd(1,2)*100+rnd(1,9)*10][rnd(0,2)]);const A=[...v],big=Math.max(...A),heavy=Math.random()<.6;
   return{q:heavy?'Ең ауыры қайсы?':'Ең жеңілі қайсы?',o:A.map(fmtKg),a:fmtKg(heavy?big:Math.min(...A))}}
 const SC_IT=[['🍉',[4,9]],['🍈',[2,5]],['🎃',[3,8]],['🥔',[1,6]],['🍎',[1,3]],['🧀',[1,4]],['🐟',[1,5]],['🍞',[1,2]]];
-function scalePan(items,q){return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;background:#fff;border-radius:16px;padding:8px 12px;min-width:170px;min-height:70px;align-items:center;color:#1a2a4a;text-shadow:none;font-size:.8em">${items.map(([e,w])=>`<span style="display:inline-flex;flex-direction:column;align-items:center;line-height:1"><span style="font-size:1.4em">${e}</span><b>${w} кг</b></span>`).join('')}${q?'<span class="qbox" style="border-color:#90a4ae;color:#1a2a4a">?</span>':''}</div><div style="width:150px;height:8px;background:#5d4037;border-radius:4px"></div></div>`}
+function scaleSVG(L,R,x,ang,fill){const W=640,H=330,cx=320,cy=78,arm=215,r=ang*Math.PI/180;
+  const end=d=>[cx+d*arm*Math.cos(r),cy+d*arm*Math.sin(r)];const [lx,ly]=end(-1),[rx,ry]=end(1);
+  const pan=(x0,y0,items,q)=>{const py=y0+120;let h=`<line x1="${x0}" y1="${y0}" x2="${x0-95}" y2="${py}" stroke="#8d6e63" stroke-width="3"/><line x1="${x0}" y1="${y0}" x2="${x0+95}" y2="${py}" stroke="#8d6e63" stroke-width="3"/>`;
+    const n=items.length+(q?1:0),gap=Math.min(78,190/Math.max(1,n));let ix=x0-gap*(n-1)/2;
+    items.forEach(([e,w])=>{h+=`<text x="${ix}" y="${py-22}" font-size="54" text-anchor="middle">${e}</text><rect x="${ix-30}" y="${py-14}" width="60" height="26" rx="13" fill="#fff" stroke="#1a2a4a" stroke-width="2"/><text x="${ix}" y="${py+6}" font-size="18" font-weight="900" text-anchor="middle" fill="#1a2a4a">${w} кг</text>`;ix+=gap});
+    if(q)h+=fill?`<rect x="${ix-34}" y="${py-62}" width="68" height="56" rx="12" fill="#43a047"/><text x="${ix}" y="${py-24}" font-size="28" font-weight="900" text-anchor="middle" fill="#fff">${fill} кг</text>`
+      :`<rect x="${ix-30}" y="${py-62}" width="60" height="56" rx="12" fill="#fff8e1" stroke="#ff9800" stroke-width="4" stroke-dasharray="8 5"/><text x="${ix}" y="${py-22}" font-size="36" font-weight="900" text-anchor="middle" fill="#ff9800">?</text>`;
+    return h+`<path d="M${x0-110} ${py+14} Q${x0} ${py+62} ${x0+110} ${py+14} Z" fill="#ffca28" stroke="#f57f17" stroke-width="4"/>`};
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:min(640px,100%);height:auto;display:block;margin:0 auto;text-shadow:none;filter:drop-shadow(0 6px 0 rgba(0,0,0,.18))">
+   <path d="M${cx-90} ${H-8} L${cx+90} ${H-8} L${cx+55} ${H-34} L${cx-55} ${H-34} Z" fill="#6d4c41"/><rect x="${cx-9}" y="${cy}" width="18" height="${H-34-cy}" fill="#8d6e63"/>
+   <line x1="${lx}" y1="${ly}" x2="${rx}" y2="${ry}" stroke="#5d4037" stroke-width="14" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="16" fill="#ffca28" stroke="#5d4037" stroke-width="5"/>
+   <polygon points="${cx-9},${cy-34} ${cx+9},${cy-34} ${cx},${cy-10}" fill="#e53935"/>
+   ${pan(lx,ly,L)}${pan(rx,ry,R,1)}</svg>`}
+const SCT={};
 function genScale(){let L,R,x,g=0;do{L=pick(SC_IT,rnd(1,2)).map(([e,[a,b]])=>[e,rnd(a,b)]);R=pick(SC_IT.filter(i=>!L.some(l=>l[0]===i[0])),1).map(([e,[a,b]])=>[e,rnd(a,b)]);
    x=L.reduce((s,i)=>s+i[1],0)-R[0][1]}while(x<1&&g++<50);if(x<1){L=[['🍉',9]];R=[['🍎',2]];x=7}
-  return{q:`<div style="font-size:.7em">⚖️ Таразы тең болу үшін оң жаққа неше кг қою керек?</div><div style="display:flex;gap:30px;justify-content:center;align-items:flex-end;margin-top:8px">${scalePan(L)}<span style="font-size:1.4em">⚖️</span>${scalePan(R,1)}</div>`,o:numOpts(x,3,1,20).map(v=>v+' кг'),a:x+' кг'}}
+  const q=`<div style="font-size:.62em;margin-bottom:6px">⚖️ Таразы тең болу үшін оң жаққа неше кг қою керек?</div>`+scaleSVG(L,R,x,-7);SCT[q]={L,R,x};
+  return{q,o:numOpts(x,3,1,20).map(v=>v+' кг'),a:x+' кг'}}
 const VES=[['🛢️','бөшке',[40,100]],['🪣','шелек',[8,12]],['🫙','банка',[2,3]],['🥛','кесе',[1,1]],['🍼','бөтелке',[1,2]],['🧴','құты',[2,5]]];
 function genVol(){const k=rnd(0,4);
   if(k===0){const a=rnd(10,95),b=rnd(10,95);return{q:`${a} л <span class="qbox">?</span> ${b} л`,o:['>','<','='],a:CMP(a,b)}}
@@ -1126,7 +1140,8 @@ function genMProb(){const k=rnd(0,6);let q,a,u;
   return{q:`<div class="dtxt" style="max-width:1100px">${q}</div>`,o:(a>=100?[a,a+10,a-10,a+100]:numOpts(a,8,1,999)).map(x=>x+' '+u),a:a+' '+u}}
 const G3GEN={mass:genMass,scale:genScale,vol:genVol,tools:genTools,mprob:genMProb};
 const g3=(id,title,icon,bg,sub,how)=>({id,grade:2,title,icon,bg,sub,make:()=>{const s=new Set(),T=[];let g=0;while(T.length<T10&&g++<200){const t=G3GEN[id]();if(s.has(t.q))continue;s.add(t.q);T.push(t)}return T},
-  render(t,st,done){st.append(el('div','task-title',t.q));choose(st,t.o,t.a,done,'word');if(how)st.append(el('div','howto',how))}});
+  render(t,st,done){const tt=el('div','task-title',t.q);st.append(tt);const sc=SCT[t.q];
+    choose(st,t.o,t.a,done,'word',sc?()=>{const v=tt.querySelector('svg');v&&(v.outerHTML=scaleSVG(sc.L,sc.R,sc.x,0,sc.x))}:null);if(how)st.append(el('div','howto',how))}});
 const G3=[g3('mass','Масса: центнер мен килограмм','⚖️','#ffe0b2','1 ц = 100 кг · салыстыр, есепте','1 ц = 100 кг'),
  g3('scale','Таразы','🍉','#dcedc8','Таразыны теңестір',''),
  g3('vol','Көлем: литр','🥛','#b3e5fc','Сыйымдылықты салыстыр, есепте','Сыйымдылық литрмен (л) өлшенеді'),
