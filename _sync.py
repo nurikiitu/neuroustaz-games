@@ -28,6 +28,8 @@ def bilim(src):
     s = open(src, encoding='utf-8').read()
     assert s.count('<div id="gate">') == 1
     s = s.replace('<div id="gate">', '<div id="gate" class="off">')
+    s = re.sub(r'<script id="gatejs">.*?</script>', '', s, count=1, flags=re.S)  # кодпен кіру тек түпнұсқада
+    s = re.sub(r'<script[^>]*gc\.zgo\.at[^>]*></script>', '', s)
     s = s.replace('<button class="btn out" onclick="logout()">🚪 Шығу</button>',
                   '<a class="btn out" id="nuback" href="../" style="text-decoration:none;left:16px;right:auto">⬅ neuroUstaz</a>')
     return s.replace('</head>', HIDE + '\n</head>', 1)

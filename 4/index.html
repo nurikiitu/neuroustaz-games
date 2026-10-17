@@ -24,6 +24,10 @@ button{font-family:inherit;border:none;cursor:pointer;color:inherit;touch-action
 /* gate */
 #gate{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:18px;background:linear-gradient(180deg,#7fe3f0,#1a6fb5)}
 #gate.off{display:none}
+#lic{position:fixed;right:10px;bottom:8px;z-index:90;background:rgba(0,0,0,.45);color:#fff;font:800 13px Nunito,sans-serif;padding:4px 12px;border-radius:12px;pointer-events:none}#lic b{font-weight:900}
+@media print{body{display:none}}
+#tech{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:18px;background:linear-gradient(160deg,#ff8f00,#e65100);font-family:Nunito,sans-serif}
+#tech .tb{background:#fff;border-radius:32px;padding:36px 40px;width:min(560px,100%);text-align:center;box-shadow:0 12px 0 rgba(0,0,0,.18)}#tech h2{font-size:clamp(28px,5vw,42px);font-weight:900;color:#e65100;margin:8px 0}#tech p{font-size:20px;font-weight:800;color:#455a64}
 .gbox{background:#fff;border-radius:34px;padding:36px 40px;width:min(520px,100%);text-align:center;box-shadow:0 12px 0 rgba(0,0,0,.18)}
 .gbox .lg{font-size:80px;line-height:1}
 .gbox h1{font-size:clamp(34px,6vw,50px);font-weight:900;color:var(--sea)}
@@ -209,12 +213,17 @@ button{font-family:inherit;border:none;cursor:pointer;color:inherit;touch-action
  .bin{flex-basis:44%}
 }
 </style>
+
 <script>if(new URLSearchParams(location.search).get('l')){document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('nuback');b&&b.remove()})}</script>
 </head>
 <body>
 
+<div id="tech"><div class="tb"><div style="font-size:80px">🛠️</div><h2>Техникалық ақаулар</h2><p>Сайтта техникалық жұмыстар жүріп жатыр.<br>Біраз уақыттан кейін қайта кіріңіз.</p><p style="font-size:16px;opacity:.7">Сұрақ болса: 8 747 733 95 73</p></div></div>
+<script>/* «Техникалық ақаулар» қосқышы: status.json → {"off":true} болса сайт бірден жабылады (бетті жаңартпай), false болса қайта ашылады */
+(function(){const t=document.getElementById('tech');const chk=()=>fetch('status.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(!j)return;t.style.display=j.off?'flex':'none';if(j.off&&j.msg)t.querySelector('p').innerHTML=j.msg}).catch(()=>{});chk();setInterval(chk,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()})})();</script>
 <div id="gate" class="off"><form class="gbox" id="gf"><div class="lg">🏝️</div><h1>Білім аралы</h1><p>4-сынып · кіру коды</p>
   <input id="gc" autocomplete="off" spellcheck="false" placeholder="КОД"><button class="btn g">Кіру ➜</button><div class="gerr" id="ge"></div></form></div>
+
 
 <section id="home" class="screen on">
   <div class="hero"><a class="btn out" id="nuback" href="../" style="text-decoration:none;left:16px;right:auto">⬅ neuroUstaz</a>
@@ -254,18 +263,6 @@ let CF=0;function stopCF(){CF++;const c=$('#cf');c.width=c.width}
 function confetti(){const my=++CF,c=$('#cf'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;setTimeout(()=>{if(CF===my)stopCF()},4500);
   const cols=['#ffc233','#ff5a5f','#22b573','#2bb0d6','#7b5cff','#ff8a3d'];const P=Array.from({length:180},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.6,vx:-2+Math.random()*4,vy:3+Math.random()*5,s:10+Math.random()*12,r:Math.random()*6,vr:-.2+Math.random()*.4,c:one(cols)}));
   (function f(){x.clearRect(0,0,c.width,c.height);if(my!==CF)return;P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()});requestAnimationFrame(f)})()}
-
-/* ===== access code ===== */
-const GH=["d89a83dad812e7e7a5a641eabcd7ab22e393b0706d5bd6b60e136860681f0195", "0b8d6fc03072694736c3a6576575ff6f81ec27856594cfcabdbdb644ad3da965", "4a268e6b0c1a908eadd47f5453728c85e036d4cefb7e8b31e300b353a4397fc5"];
-const TMP={'1257eff4e6550c87a78d08e4e10770d3923c6da0a53164795ac013aa10cb6119':1792247064316};for(const k in TMP)if(Date.now()<TMP[k])GH.push(k);
-setInterval(()=>{let o=null;try{o=localStorage.getItem('ba_ok')}catch(e){}if(TMP[o]&&Date.now()>=TMP[o]){try{localStorage.removeItem('ba_ok')}catch(e){}location.reload()}},20000);
-
-async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('bilimaraly:'+s.trim().toUpperCase()));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-async function tryCode(c){{const h=await sha(c);if(GH.includes(h)){try{localStorage.setItem('ba_ok',h)}catch(e){}$('#gate').classList.add('off');return true}$('#ge').textContent='Код қате. Қайта тексеріңіз.';reanim($('#gc'),'shake');return false}}
-function logout(){try{localStorage.removeItem('ba_ok')}catch(e){}location.href=location.pathname}
-$('#gf').onsubmit=e=>{e.preventDefault();const v=$('#gc').value;if(v.trim())tryCode(v)};
-(()=>{let ok=null;try{ok=localStorage.getItem('ba_ok')}catch(e){}const q=new URLSearchParams(location.search).get('code');
-  if(GH.includes(ok))$('#gate').classList.add('off');else if(q)tryCode(q);else setTimeout(()=>$('#gc').focus(),100)})();
 
 /* ===== progress ===== */
 const LV=['🟢 Жеңіл','🟡 Орташа','🔴 Қиын'];
