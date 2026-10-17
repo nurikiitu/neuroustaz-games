@@ -1073,6 +1073,66 @@ sortGame({ id:'pos', grade:2, title:'Сөз таптары', icon:'🏷️', bg:
 ];
 
 GAMES.push(...G2);
+/* ===== 2-сынып: Масса, көлем, өлшеуіш құралдар (29–31-сабақтар) ===== */
+const CMP=(a,b)=>a>b?'>':a<b?'<':'=';
+const fmtKg=k=>{const c=Math.floor(k/100),r=k%100;return c&&r?`${c} ц ${r} кг`:c?`${c} ц`:`${r} кг`};
+const MCARD=(e,t)=>`<span style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:#1a2a4a;border-radius:18px;padding:4px 16px;margin:4px;text-shadow:none;font-size:.85em">${e} ${t}</span>`;
+function genMass(){const k=rnd(0,5);
+  if(k===0){const n=rnd(1,9);return Math.random()<.5?{q:`${n} ц = <span class="qbox">?</span> кг`,o:[n*100+' кг',n*10+' кг',n+' кг',n*1000+' кг'],a:n*100+' кг'}
+    :{q:`${n*100} кг = <span class="qbox">?</span> ц`,o:[n+' ц',n*10+' ц',n*100+' ц'],a:n+' ц'}}
+  if(k===1){const n=rnd(1,8),c=[n*100,n*100+rnd(1,9)*10,n*100-rnd(1,9)*10,(n+1)*10][rnd(0,3)];return{q:`${n} ц <span class="qbox">?</span> ${c} кг`,o:['>','<','='],a:CMP(n*100,c)}}
+  if(k===2){const a=rnd(1,9)*10+rnd(0,9);return Math.random()<.5?{q:`1 ц – ${a} кг = <span class="qbox">?</span> кг`,o:numOpts(100-a,12,1,99).map(x=>x+' кг'),a:(100-a)+' кг'}
+    :{q:`${a} кг + ${100-a} кг = <span class="qbox">?</span>`,o:['1 ц','10 кг','2 ц',(a+100-a+10)+' кг'],a:'1 ц'}}
+  if(k===3){const b=[10,20,25,50][rnd(0,3)],n=rnd(1,b===10?3:4);return{q:`${n} ц қант алу үшін <b>${b} кг</b>-дық неше қап керек?`,o:numOpts(n*100/b,4,1,40).map(x=>x+' қап'),a:(n*100/b)+' қап'}}
+  if(k===4){const n=rnd(1,6),k2=rnd(1,9)*10;return{q:`${n} ц ${k2} кг = <span class="qbox">?</span> кг`,o:[n*100+k2,n*10+k2,n+k2,n*1000+k2].map(x=>x+' кг'),a:(n*100+k2)+' кг'}}
+  const v=new Set();while(v.size<3)v.add([rnd(1,3)*100,rnd(1,19)*10,rnd(1,2)*100+rnd(1,9)*10][rnd(0,2)]);const A=[...v],big=Math.max(...A),heavy=Math.random()<.6;
+  return{q:heavy?'Ең ауыры қайсы?':'Ең жеңілі қайсы?',o:A.map(fmtKg),a:fmtKg(heavy?big:Math.min(...A))}}
+const SC_IT=[['🍉',[4,9]],['🍈',[2,5]],['🎃',[3,8]],['🥔',[1,6]],['🍎',[1,3]],['🧀',[1,4]],['🐟',[1,5]],['🍞',[1,2]]];
+function scalePan(items,q){return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;background:#fff;border-radius:16px;padding:8px 12px;min-width:170px;min-height:70px;align-items:center;color:#1a2a4a;text-shadow:none;font-size:.8em">${items.map(([e,w])=>`<span style="display:inline-flex;flex-direction:column;align-items:center;line-height:1"><span style="font-size:1.4em">${e}</span><b>${w} кг</b></span>`).join('')}${q?'<span class="qbox" style="border-color:#90a4ae;color:#1a2a4a">?</span>':''}</div><div style="width:150px;height:8px;background:#5d4037;border-radius:4px"></div></div>`}
+function genScale(){let L,R,x,g=0;do{L=pick(SC_IT,rnd(1,2)).map(([e,[a,b]])=>[e,rnd(a,b)]);R=pick(SC_IT.filter(i=>!L.some(l=>l[0]===i[0])),1).map(([e,[a,b]])=>[e,rnd(a,b)]);
+   x=L.reduce((s,i)=>s+i[1],0)-R[0][1]}while(x<1&&g++<50);if(x<1){L=[['🍉',9]];R=[['🍎',2]];x=7}
+  return{q:`<div style="font-size:.7em">⚖️ Таразы тең болу үшін оң жаққа неше кг қою керек?</div><div style="display:flex;gap:30px;justify-content:center;align-items:flex-end;margin-top:8px">${scalePan(L)}<span style="font-size:1.4em">⚖️</span>${scalePan(R,1)}</div>`,o:numOpts(x,3,1,20).map(v=>v+' кг'),a:x+' кг'}}
+const VES=[['🛢️','бөшке',[40,100]],['🪣','шелек',[8,12]],['🫙','банка',[2,3]],['🥛','кесе',[1,1]],['🍼','бөтелке',[1,2]],['🧴','құты',[2,5]]];
+function genVol(){const k=rnd(0,4);
+  if(k===0){const a=rnd(10,95),b=rnd(10,95);return{q:`${a} л <span class="qbox">?</span> ${b} л`,o:['>','<','='],a:CMP(a,b)}}
+  if(k===1){const a=rnd(30,99),b=rnd(10,a-5),c=rnd(10,99),tp=rnd(0,1);const L=tp?a-b:a+b>99?a-b:a+b,txt=tp||a+b>99?`${a} л – ${b} л`:`${a} л + ${b} л`;
+    return{q:`${txt} <span class="qbox">?</span> ${c} л`,o:['>','<','='],a:CMP(L,c)}}
+  if(k===2){const [t,j]=[[10,2],[12,3],[20,5],[6,2],[8,2],[15,3],[9,3],[20,4]][rnd(0,7)];return{q:`${t} л сүтті ${j} л-лік банкаларға құйса, неше банка керек?`,o:numOpts(t/j,3,1,12).map(x=>x+' банка'),a:(t/j)+' банка'}}
+  if(k===3){const a=rnd(30,90),b=rnd(5,25);return{q:`Бөшкеде ${a} л су бар. Одан ${b} л су алынды. Неше литр су қалды?`,o:numOpts(a-b,10,1,99).map(x=>x+' л'),a:(a-b)+' л'}}
+  const P=pick(VES,3).map(([e,n,[a,b]])=>[e,n,rnd(a,b)]);P.sort((x,y)=>y[2]-x[2]);if(P[0][2]===P[1][2])P[0][2]++;const many=Math.random()<.6,A=many?P[0]:P[2];
+  if(!many&&P[1][2]===P[2][2])P[1][2]++;
+  return{q:`${many?'Қай ыдысқа көп су сыяды?':'Қай ыдысқа аз су сыяды?'}<br>${P.map(p=>MCARD(p[0],p[1]+' – '+p[2]+' л')).join('')}`,o:P.map(p=>p[0]+' '+p[1]),a:A[0]+' '+A[1]}}
+const TOOLS={t:'⚖️ Таразы',r:'📏 Сызғыш',v:'🧪 Өлшеуіш ыдыс',c:'⌚ Сағат'};
+const TQ=[['🍉 Қарбыздың массасын','t'],['🥔 Картоптың массасын','t'],['🧒 Баланың салмағын','t'],['🍎 Алманың массасын','t'],['🧳 Сөмкенің массасын','t'],
+ ['✏️ Қаламның ұзындығын','r'],['📕 Кітаптың ұзындығын','r'],['🧵 Жіптің ұзындығын','r'],['🚪 Есіктің биіктігін','r'],['🪑 Үстелдің ұзындығын','r'],
+ ['🥛 Сүттің көлемін','v'],['💧 Шелектегі суды','v'],['🧃 Шырынның көлемін','v'],['🍵 Шәйнектегі суды','v'],
+ ['⏰ Сабақтың ұзақтығын','c'],['🏃 Жүгіру уақытын','c'],['🛏️ Ұйқы уақытын','c'],['📺 Мультфильмнің ұзақтығын','c']];
+const UQ=[['кг (килограмм)','Масса'],['ц (центнер)','Масса'],['л (литр)','Сыйымдылық'],['см (сантиметр)','Ұзындық'],['дм (дециметр)','Ұзындық'],['м (метр)','Ұзындық'],['мин (минут)','Уақыт'],['сағ (сағат)','Уақыт']];
+const ORD=[['Ең ауыры қайсы?',['🐪 Түйе','🐑 Қой','🐐 Лақ'],'🐪 Түйе'],['Ең жеңілі қайсы?',['🐪 Түйе','🐑 Қой','🐐 Лақ'],'🐐 Лақ'],['Ең ауыры қайсы?',['🐄 Сиыр','🐕 Ит','🐈 Мысық'],'🐄 Сиыр'],
+ ['Ең жеңілі қайсы?',['🐘 Піл','🐎 Жылқы','🐇 Қоян'],'🐇 Қоян'],['Ең көп су сыятыны қайсы?',['🛢️ Бөшке','🪣 Шелек','🥛 Кесе'],'🛢️ Бөшке'],['Ең аз су сыятыны қайсы?',['🛢️ Бөшке','🪣 Шелек','🥛 Кесе'],'🥛 Кесе'],
+ ['Ең ұзыны қайсы?',['🚌 Автобус','🚗 Көлік','🛴 Самокат'],'🚌 Автобус'],['Ең қысқасы қайсы?',['✏️ Қарындаш','🪑 Үстел','🚪 Есік'],'✏️ Қарындаш']];
+function genTools(){const k=rnd(0,2);
+  if(k===0){const [w,t]=TQ[rnd(0,TQ.length-1)];return{q:`${w} немен өлшейміз?`,o:Object.values(TOOLS),a:TOOLS[t]}}
+  if(k===1){const [u,a]=UQ[rnd(0,UQ.length-1)];return{q:`<b>${u}</b> – нені өлшейтін бірлік?`,o:['Масса','Сыйымдылық','Ұзындық','Уақыт'],a}}
+  const [q,o,a]=ORD[rnd(0,ORD.length-1)];return{q,o,a}}
+function genMProb(){const k=rnd(0,6);let q,a,u;
+  if(k===0){const A=rnd(25,60),B=rnd(10,A-5);q=`Анам бақшадан ${A} кг шие терді. ${B} кг шиеден шырын жасады. Неше кг шие қалды?`;a=A-B;u='кг'}
+  else if(k===1){const A=rnd(2,9),B=rnd(2,9);if(A===B)return genMProb();q=`Бірінші сөмкеде ${A} кг алма, екіншісінде ${B} кг алма бар. Қай сөмке неше кг-ға ауыр?`;a=Math.abs(A-B);u='кг-ға'}
+  else if(k===2){const A=rnd(5,30),B=rnd(5,30);q=`Шелекте ${A} л су бар еді. Тағы ${B} л су құйды. Енді неше литр су болды?`;a=A+B;u='л'}
+  else if(k===3){const A=rnd(10,30),B=rnd(10,40);q=`Дастан бөшкеден ${A} л су алды. Бөшкеде ${B} л су қалды. Бөшкеде неше литр су болған еді?`;a=A+B;u='л'}
+  else if(k===4){const c=rnd(3,6),s=rnd(4,8)*10;q=`Түйенің массасы ${c} ц, қойдың массасы ${s} кг. Түйе қойдан неше кг ауыр?`;a=c*100-s;u='кг'}
+  else if(k===5){const A=rnd(10,15),B=rnd(20,30);q=`Лақтың массасы ${A} кг, ал қой одан ${B} кг ауыр. Қойдың массасы неше кг?`;a=A+B;u='кг'}
+  else{const A=rnd(20,40),B=rnd(20,50);q=`Әжем сырмақ сыруға ${A} дм және ${B} дм жіп қолданды. Барлығы неше дм жіп қолданды?`;a=A+B;u='дм'}
+  return{q:`<div class="dtxt" style="max-width:1100px">${q}</div>`,o:(a>=100?[a,a+10,a-10,a+100]:numOpts(a,8,1,999)).map(x=>x+' '+u),a:a+' '+u}}
+const G3GEN={mass:genMass,scale:genScale,vol:genVol,tools:genTools,mprob:genMProb};
+const g3=(id,title,icon,bg,sub,how)=>({id,grade:2,title,icon,bg,sub,make:()=>{const s=new Set(),T=[];let g=0;while(T.length<T10&&g++<200){const t=G3GEN[id]();if(s.has(t.q))continue;s.add(t.q);T.push(t)}return T},
+  render(t,st,done){st.append(el('div','task-title',t.q));choose(st,t.o,t.a,done,'word');if(how)st.append(el('div','howto',how))}});
+const G3=[g3('mass','Масса: центнер мен килограмм','⚖️','#ffe0b2','1 ц = 100 кг · салыстыр, есепте','1 ц = 100 кг'),
+ g3('scale','Таразы','🍉','#dcedc8','Таразыны теңестір',''),
+ g3('vol','Көлем: литр','🥛','#b3e5fc','Сыйымдылықты салыстыр, есепте','Сыйымдылық литрмен (л) өлшенеді'),
+ g3('tools','Өлшеуіш құралдар','📏','#f8bbd0','Немен өлшейміз?','⚖️ масса · 📏 ұзындық · 🧪 көлем · ⌚ уақыт'),
+ g3('mprob','Шамалармен есептер','📝','#d1c4e9','кг, л, дм есептері','')];
+GAMES.push(...G3);
 /* ===== 2 оқушы жарысы (бөлек бөлім) ===== */
 const cap1=w=>w.charAt(0).toUpperCase()+w.slice(1);
 function coinSplit(p){const r=[];for(const v of COINS)while(p>=v){r.push(v);p-=v}return r.join(' + ')}
@@ -1102,6 +1162,7 @@ const THEMES={tug:{n:'Арқан тартыс',i:'🪢'},rocket:{n:'Ракета
 const DUELS=[['clock','rocket','🕐','Сағатты оқы'],['tens','tug','🔟','Ондық пен бірлік'],['mult','race','✖️','Көбейту кестесі'],['length','horse','📏','Ұзындық өлшемдері'],
  ['shop','tug','🛒','Дүкен: тиындар'],['probs','rocket','📝','Мәтінді есептер'],['pos','tug','🏷️','Сөз таптары'],['syl','race','✂️','Буынға бөл'],['caps','horse','🔠','Бас әріп'],
  ['punc','rocket','❓','Сөйлем соңындағы белгі'],['ant','tug','🔄','Қарама-қарсы сөздер'],['plur','race','➕','Көптік жалғау'],['cal','horse','📅','Апта, ай, мезгіл']];
+Object.assign(DGEN,G3GEN);DUELS.push(['mass','tug','⚖️','Масса: ц және кг'],['scale','race','🍉','Таразы'],['vol','rocket','🥛','Көлем: литр'],['tools','horse','📏','Өлшеуіш құралдар'],['mprob','tug','📝','Шамалармен есептер']);
 let DT=0,DCUR=null;
 function openDuels(){DT++;show('dhome');const g=$('#dgrid');g.innerHTML='';
   DUELS.forEach(d=>{const T=THEMES[d[1]];const c=el('button','gcard dcard',`<div class="ic">${T.i}</div><div class="t">${d[3]}</div><div class="s">${d[2]} ${T.n}</div>`);c.onclick=()=>{beep('tap');startDuel(d)};g.append(c)});
