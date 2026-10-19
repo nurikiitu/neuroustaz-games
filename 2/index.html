@@ -356,12 +356,117 @@ button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation;
 .dfin .row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}.dfin .tbtn{background:#1e88e5;color:#fff}
 @media(max-width:700px){.gcard.duelcard{grid-column:span 2}#dgame.active{height:auto;min-height:100vh}.dsides{flex-direction:column}.dside.s1{flex-direction:row}.dq{font-size:18px}.dopt{font-size:16px;min-height:48px}.dtrack{height:100px}}
 </style>
-
-<script>if(new URLSearchParams(location.search).get('l')){document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('nuback');b&&b.remove()})}</script>
+<script data-goatcounter="https://neuroustaz.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
 
-<script>window.logout1=()=>{location.href='../'};</script>
+<div id="gate"><form class="gbox" id="gf"><div style="font-size:72px">🧠</div><h2>neuroUstaz · 1–4 сынып</h2><p>Кіру коды</p>
+<input id="gc" autocomplete="off" spellcheck="false" placeholder="КОД"><button class="tbtn gbtn">Кіру ➜</button><div class="gerr" id="ge"></div></form></div>
+<script>try{localStorage.removeItem('hub_ok')}catch(e){}
+(function(){/* код → иесі, мерзімі (сол күннің соңына дейін) */
+const C={'a30ee11665212d25bf6fc4f929524f372931e34fd65ac0eb670f7c41bb7c854b':{n:"Нурдаулет",u:"",k:"NURDAULET5457",x:1},'7a189e6207690e060a73a3ad985e79ce03e4c5b2bd1b4d95d7c8ffd934e7e6d8':{n:"AqylOI24",u:"",k:"AQYLOI24"}};
+const PHONE='8 747 733 95 73';
+const DEV=(()=>{let d=null;try{d=localStorage.getItem('dev_id')}catch(e){}if(!d){d=Math.random().toString(36).slice(2,6).toUpperCase();try{localStorage.setItem('dev_id',d)}catch(e){}}return d})();
+const DEVNAME=(()=>{const u=navigator.userAgent,tp=navigator.maxTouchPoints||0,W=Math.max(screen.width,screen.height);
+  if(/iPhone/i.test(u))return 'iPhone';
+  if(/iPad/i.test(u)||(/Macintosh/i.test(u)&&tp>1))return 'iPad';
+  if(/Macintosh|Mac OS X/i.test(u))return 'MacBook / Mac';
+  if(/Android/i.test(u)){if(/Mobile/i.test(u))return 'Android телефон';return W>=1600?'Интерактивті тақта (Android)':'Android планшет'}
+  if(/Windows/i.test(u))return tp>0&&W>=1600?'Интерактивті тақта (Windows)':tp>0?'Windows сенсорлы':'Windows компьютер';
+  if(/CrOS/i.test(u))return 'Chromebook';
+  if(/Linux/i.test(u))return tp>0&&W>=1600?'Интерактивті тақта (Linux)':'Linux компьютер';
+  return 'Басқа құрылғы'})();
+/* құрылғының «саусақ ізі»: браузер тазаланса да өзгермейді */
+const GPU=(()=>{try{const c=document.createElement('canvas'),g=c.getContext('webgl')||c.getContext('experimental-webgl');const e=g.getExtension('WEBGL_debug_renderer_info');
+  let r=e?g.getParameter(e.UNMASKED_RENDERER_WEBGL):g.getParameter(g.RENDERER);r=String(r).replace(/ANGLE \(|\)|Direct3D.*|vs_\S+|ps_\S+|\(0x[0-9A-F]+\)/gi,'').replace(/,.*$/,'').replace(/\s+/g,' ').trim();return r.slice(0,40)}catch(e){return '?'}})();
+const FP=(async()=>{let cv='';try{const c=document.createElement('canvas');c.width=240;c.height=60;const x=c.getContext('2d');x.textBaseline='top';x.font='16px Arial';x.fillStyle='#f60';x.fillRect(10,10,100,30);x.fillStyle='#069';x.fillText('neuroUstaz Ғ Ә 😊 4455',4,18);x.strokeStyle='rgba(120,30,200,.7)';x.arc(120,30,20,0,6);x.stroke();cv=c.toDataURL()}catch(e){}
+  let fonts='';try{const F=['Arial','Calibri','Cambria','Candara','Comic Sans MS','Consolas','Constantia','Corbel','Courier New','Ebrima','Franklin Gothic Medium','Gabriola','Georgia','Impact','Lucida Console','Malgun Gothic','Microsoft Sans Serif','MS Gothic','Palatino Linotype','Segoe Print','Segoe Script','Segoe UI','SimSun','Sitka Text','Sylfaen','Tahoma','Times New Roman','Trebuchet MS','Verdana','Yu Gothic','Bahnschrift','Leelawadee UI','Nirmala UI','Myanmar Text','Javanese Text','Microsoft Himalaya','Mongolian Baiti','Book Antiqua','Garamond','Century Gothic','Bookman Old Style','Wingdings','PT Sans','Roboto','Ubuntu','Helvetica Neue','Menlo','Monaco','Avenir'];
+    const c=document.createElement('canvas').getContext('2d'),t='mmmmmmmmlliWW@#1Ә';const w=f=>{c.font='72px '+f;return c.measureText(t).width};const base=['monospace','serif','sans-serif'].map(w);
+    fonts=F.filter(f=>['monospace','serif','sans-serif'].some((b,k)=>w(`'${f}',${b}`)!==base[k])).join(',')}catch(e){}
+  /* браузерге тәуелсіз белгілер ғана: бір құрылғыдағы Chrome, Edge, Firefox бірдей із береді */
+  const OS=/Windows/i.test(navigator.userAgent)?'win':/Android/i.test(navigator.userAgent)?'and':/iPhone|iPad/i.test(navigator.userAgent)||(/Mac/i.test(navigator.userAgent)&&navigator.maxTouchPoints>1)?'ios':/Mac/i.test(navigator.userAgent)?'mac':'oth';
+  const raw=[OS,fonts,screen.width+'x'+screen.height,screen.colorDepth,Math.round(devicePixelRatio*100),navigator.hardwareConcurrency,Intl.DateTimeFormat().resolvedOptions().timeZone,navigator.maxTouchPoints>0?1:0].join('|');
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw));return [...new Uint8Array(b)].slice(0,3).map(v=>v.toString(16).padStart(2,'0')).join('').toUpperCase().slice(0,5)})();
+/* телефон моделі */
+const MODEL=(async()=>{const u=navigator.userAgent;let md='',pv='';
+  try{if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){const v=await navigator.userAgentData.getHighEntropyValues(['model','platformVersion']);md=(v.model||'').trim();pv=v.platformVersion||''}}catch(e){}
+  if(!md){const m=u.match(/Android [\d.]+; (?:[a-z]{2}[-_][a-z]{2}; )?([^;)]+?)(?: Build|\))/i);if(m&&m[1]!=='K')md=m[1].trim()}
+  if(/Android/i.test(u)){const av=(u.match(/Android ([\d.]+)/)||[])[1];const ver=pv&&pv!=='0.0.0'?pv.split('.')[0]:(av&&av!=='10'?av:'');const osv=ver?' · Android '+ver:'';
+   if(!md)return 'Android'+osv;
+   const S={A105:'A10',A107:'A10s',A205:'A20',A207:'A20s',A305:'A30',A307:'A30s',A505:'A50',A507:'A50s',A515:'A51',A525:'A52',A526:'A52 5G',A528:'A52s',A536:'A53',A546:'A54',A556:'A55',A566:'A56',A705:'A70',A715:'A71',A725:'A72',A736:'A73',
+    A013:'A01 Core',A015:'A01',A022:'A02',A025:'A02s',A032:'A03 Core',A035:'A03',A037:'A03s',A045:'A04',A047:'A04s',A042:'A04e',A055:'A05',A057:'A05s',A065:'A06',A115:'A11',A125:'A12',A127:'A12',A135:'A13',A137:'A13',A145:'A14',A146:'A14 5G',A155:'A15',A156:'A15 5G',A165:'A16',A166:'A16 5G',
+    A217:'A21s',A225:'A22',A226:'A22 5G',A235:'A23',A245:'A24',A256:'A25',A266:'A26',A315:'A31',A325:'A32',A336:'A33',A346:'A34',A356:'A35',A366:'A36',A600:'A6',A750:'A7 (2018)',A920:'A9 (2018)',
+    G970:'S10e',G973:'S10',G975:'S10+',G980:'S20',G981:'S20',G985:'S20+',G986:'S20+',G988:'S20 Ultra',G780:'S20 FE',G781:'S20 FE',G991:'S21',G996:'S21+',G998:'S21 Ultra',G990:'S21 FE',
+    S901:'S22',S906:'S22+',S908:'S22 Ultra',S911:'S23',S916:'S23+',S918:'S23 Ultra',S711:'S23 FE',S921:'S24',S926:'S24+',S928:'S24 Ultra',S721:'S24 FE',S931:'S25',S936:'S25+',S938:'S25 Ultra',S937:'S25 Edge',S731:'S25 FE',
+    N970:'Note10',N975:'Note10+',N770:'Note10 Lite',N980:'Note20',N981:'Note20',N985:'Note20 Ultra',N986:'Note20 Ultra',G960:'S9',G965:'S9+',N960:'Note9',
+    F700:'Z Flip',F707:'Z Flip 5G',F711:'Z Flip3',F721:'Z Flip4',F731:'Z Flip5',F741:'Z Flip6',F761:'Z Flip7',F916:'Z Fold2',F926:'Z Fold3',F936:'Z Fold4',F946:'Z Fold5',F956:'Z Fold6',F966:'Z Fold7',
+    M215:'M21',M315:'M31',M325:'M32',M336:'M33',M346:'M34',M515:'M51',M526:'M52',M135:'M13',M145:'M14',M155:'M15',M236:'M23',
+    T220:'Tab A7 Lite',T225:'Tab A7 Lite',T500:'Tab A7',T505:'Tab A7',X200:'Tab A8',X205:'Tab A8',X110:'Tab A9',X115:'Tab A9',X210:'Tab A9+',X216:'Tab A9+',P610:'Tab S6 Lite',P613:'Tab S6 Lite',P615:'Tab S6 Lite',P620:'Tab S6 Lite',X700:'Tab S8',X800:'Tab S8+',X710:'Tab S9',X510:'Tab S9 FE',X520:'Tab S10 FE',T290:'Tab A 8.0',T295:'Tab A 8.0',T510:'Tab A 10.1',T515:'Tab A 10.1'};
+   let s=md.match(/^SM-([A-Z])(\d{3})/i);if(s){const k=(s[1]+s[2]).toUpperCase();return 'Samsung Galaxy '+(S[k]||md)+(S[k]?' ('+md+')':'')+osv}
+   const B=[[/^(Redmi|POCO|Mi |Xiaomi)/i,''],[/^(M\d{4}[A-Z]\d+[A-Z]*|2\d{3}[0-9A-Z]{5,})$/i,'Xiaomi '],[/^CPH\d+/i,'OPPO '],[/^RMX\d+/i,'realme '],[/^V2\d{3}/i,'vivo '],[/^(TECNO|Infinix|itel)/i,''],[/^Pixel/i,'Google '],
+    [/^(ELE|VOG|ANA|JNY|MAR|NOH|LIO|NAM|CDY|BLA|YAL|STK|POT|MED|JKM|ART|DVC|LYA)-/i,'Huawei '],[/^(HONOR|ALI|FNE|RMO|REA|CRT|VNE|ANY|LGE|RKY|CMA|NTN|BRP|MAO)-/i,'Honor '],[/^(moto|motorola)/i,''],[/^(Nokia|ZTE|Lenovo|HUAWEI|OnePlus|Nothing)/i,''],[/^(TB-|TB\d)/i,'Lenovo Tab ']];
+   for(const [r,p] of B)if(r.test(md))return p+md+osv;return md+osv}
+  if(/iPhone/.test(u)){const k=Math.min(screen.width,screen.height)+'x'+Math.max(screen.width,screen.height)+'@'+devicePixelRatio;const ios=(u.match(/OS (\d+)_(\d+)/)||[]);const iv=ios[1]?' · iOS '+ios[1]+'.'+ios[2]:'';
+    const T={'320x568@2':'iPhone SE (1) / 5s','375x667@2':'iPhone 6/6s/7/8 / SE (2,3)','414x736@3':'iPhone 6+/7+/8+','375x812@3':'iPhone X/XS/11 Pro/12 mini/13 mini','414x896@2':'iPhone XR/11','414x896@3':'iPhone XS Max/11 Pro Max',
+      '390x844@3':'iPhone 12/13/14 (немесе Pro, 16e)','428x926@3':'iPhone 12 Pro Max/13 Pro Max/14 Plus','393x852@3':'iPhone 14 Pro/15/15 Pro/16','430x932@3':'iPhone 14 Pro Max/15 Plus/15 Pro Max/16 Plus','402x874@3':'iPhone 16 Pro/17/17 Pro','440x956@3':'iPhone 16 Pro Max/17 Pro Max','420x912@3':'iPhone Air'};
+    return (T[k]||'iPhone (экран '+k+')')+iv}
+  if(/iPad/i.test(u)||(/Macintosh/i.test(u)&&navigator.maxTouchPoints>1)){const ios=(u.match(/OS (\d+)_(\d+)/)||u.match(/Version\/(\d+)\.(\d+)/)||[]);return 'iPad'+(ios[1]?' · iPadOS '+ios[1]+'.'+ios[2]:'')+' · '+screen.width+'×'+screen.height}
+  return md})();
+/* IP мекенжайы, қала, провайдер */
+const NET=(async()=>{const tm=ms=>new Promise(r=>setTimeout(()=>r(null),ms));
+  try{const r=await Promise.race([fetch('https://ipwho.is/?lang=ru').then(x=>x.json()),tm(3000)]);if(r&&r.ip)return `IP ${r.ip} (${[r.city,r.connection&&r.connection.isp].filter(Boolean).join(', ')})`}catch(e){}
+  try{const r=await Promise.race([fetch('https://api.ipify.org?format=json').then(x=>x.json()),tm(3000)]);if(r&&r.ip)return 'IP '+r.ip}catch(e){}return 'IP ?'})();
+const NOW=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return `${z(d.getDate())}.${z(d.getMonth()+1)}.${d.getFullYear()} ${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`};
+/* Firebase (Firestore REST) + Telegram: кодты 3-тен көп құрылғы ашса, хабар */
+const FB='https://firestore.googleapis.com/v1/projects/neuroustaz-324dd/databases/(default)/documents/devices/',FBK='AIzaSyBGOkJasSxBZKBVi9FOOAsVK146Itsv_5Y';
+const TG='8631088711:AAHaScVUDSTCl5NIZkuVGXnUM6qtlAWJCyE',TGID='1795185899',LIMIT=3;
+/* құрылғы шегі: 4-ші құрылғы шықса, код БАРЛЫҚ құрылғыда бұғатталады.
+   Бұғат белгісі – fps тізіміндегі «⛔» жолы. Иесі Firebase → Firestore → devices → <код> → fps ішінен «⛔» жолын өшірсе, код қайта ашылады. */
+const BLK='⛔';
+const CONSOLE=c=>'https://console.firebase.google.com/project/neuroustaz-324dd/firestore/databases/-default-/data/~2Fdevices~2F'+encodeURIComponent(c);
+async function fsGet(code){const r=await fetch(FB+encodeURIComponent(code)+'?key='+FBK);if(r.status===404)return [];if(!r.ok)throw 0;const F=(await r.json()).fields||{};
+ return ((F.fps&&F.fps.arrayValue&&F.fps.arrayValue.values)||[]).map(v=>v.stringValue)}
+async function fsPut(code,fps,name){return fetch(FB+encodeURIComponent(code)+'?key='+FBK+'&updateMask.fieldPaths=fps&updateMask.fieldPaths=n&updateMask.fieldPaths=t',{method:'PATCH',headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({fields:{fps:{arrayValue:{values:fps.map(x=>({stringValue:x}))}},n:{stringValue:name},t:{stringValue:NOW()}}})})}
+function tgSend(txt,code){const kb={inline_keyboard:[[{text:'🔓 Firebase-те ашу (рұқсат беру)',url:CONSOLE(code)}]]};
+ fetch('https://api.telegram.org/bot'+TG+'/sendMessage?chat_id='+TGID+'&text='+encodeURIComponent(txt)+'&reply_markup='+encodeURIComponent(JSON.stringify(kb)),{mode:'no-cors'})}
+async function devWatch(code,name,fp,line,desc,nolim){try{const fps=await fsGet(code);
+  if(!nolim&&fps.includes(BLK))return 'blocked';
+  if(fps.includes(fp))return 'ok';
+  if(nolim||fps.length<LIMIT){fps.push(fp);await fsPut(code,fps,name);return 'ok'}
+  const old=fps.slice();fps.push(BLK,fp);await fsPut(code,fps,name);
+  tgSend(`⛔ ${code} · ${name}\nКод ${LIMIT+1}-ші құрылғыдан ашылды — код БАРЛЫҚ құрылғыда бұғатталды!\n\nЖаңа құрылғы (із ${fp}):\n${line}\n\nБұрынғы құрылғылар: ${old.join(', ')}\n\n🔓 Рұқсат беру: төмендегі батырма → fps тізімінен «⛔» жолын өшіріңіз.\nЖаңа құрылғыға (${fp}) рұқсат бермесеңіз, оны да өшіріңіз — бірақ ол қайта кірсе, код тағы бұғатталады.`,code);
+  return 'blocked';
+}catch(e){return 'ok'}}
+function blockedMsg(fp){er.innerHTML=`⛔ Бұл код уақытша бұғатталды:<br>рұқсат етілгеннен көп құрылғыдан кірілді.<br>Рұқсат алу үшін хабарласыңыз: <b>${PHONE}</b><br><small style="color:#888">Құрылғы ізі: ${fp||''}</small>`}
+const gcEv=(path,title,n=0)=>{try{if(window.goatcounter&&window.goatcounter.count){window.goatcounter.count({path,title,event:true});return}}catch(e){}if(n<20)setTimeout(()=>gcEv(path,title,n+1),500)};
+const sha=async s=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('nuhub:'+s.trim().toUpperCase()));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')};
+const g=document.getElementById('gate'),inp=document.getElementById('gc'),er=document.getElementById('ge');
+const valid=h=>{const c=C[h];if(!c)return 0;if(c.e&&Date.now()>c.e)return -1;if(c.u&&new Date()>new Date(c.u+'T23:59:59'))return -1;return 1};
+const fmt=d=>d.split('-').reverse().join('.');
+let CUR=null;
+function enter(h,how){const c=C[h];const when=NOW();er.textContent='⏳ Тексерілуде…';
+ Promise.all([FP,MODEL,NET]).then(async([fp,md,ip])=>{window.__fp=fp;const dev=(md?(md.startsWith(DEVNAME)?md:DEVNAME+' '+md):DEVNAME);const code='hub-'+(c.k||'?');
+  const res=await Promise.race([devWatch(code,c.n,fp,'🕐 '+when+'\n📱 '+dev+' · '+screen.width+'×'+screen.height+' · із '+fp+'\n🌐 '+ip,dev+' · '+screen.width+'×'+screen.height+' · '+ip+' · '+when,!!c.x),new Promise(r=>setTimeout(()=>r('ok'),7000))]);
+  gcEv('hub-kod-'+(c.k||'?')+' | '+when+' | '+(res==='blocked'?'БҰҒАТТАЛДЫ':res==='denied'?'ТЫЙЫМ':(how||'ашылды'))+' | із '+fp+' | '+dev+' · '+screen.width+'×'+screen.height+' · '+GPU+' | '+ip,c.n+(res==='blocked'?' – бұғатталған':res==='denied'?' – рұқсатсыз құрылғы':how==='кірді'?' – кодпен кірді':' – сайтты ашты')+' · құрылғы '+DEV);
+  if(res==='blocked'){g.style.display='';blockedMsg(fp);return}
+  CUR={code,fp,x:!!c.x};er.textContent='';g.style.display='none';if(c.e){const E=new Date(c.e),hm=String(E.getHours()).padStart(2,'0')+':'+String(E.getMinutes()).padStart(2,'0');
+  const up=()=>{const ms=c.e-Date.now();if(ms<=0){['c1_ok','hub_ok','c3_ok','ba_ok','c3_pass'].forEach(k=>{try{sessionStorage.removeItem(k)}catch(e){}});alert('⏳ Уақытша кодтың мерзімі бітті ('+hm+').\nҰзарту үшін хабарласыңыз: '+PHONE);location.reload();return}
+   setTimeout(up,Math.min(30000,ms))};up();return}const b=document.createElement('div');b.id='lic';b.innerHTML=`🔒 Лицензия: <b>${c.n}</b>${c.u?` · ${fmt(c.u)} дейін`:''}`;document.body.append(b)})}
+/* ашық тұрған құрылғыларды да тексеру: код бұғатталса немесе құрылғы тізімнен алынса — жабылады */
+setInterval(async()=>{if(!CUR||CUR.x||g.style.display!=='none')return;try{const D=await fsGet(CUR.code);if(D.includes(BLK)){g.style.display='';const l=document.getElementById('lic');l&&l.remove();blockedMsg(CUR.fp);CUR=null}}catch(e){}},45000);
+function expired(){gcEv('mezgil-bitti','Мерзімі біткен кодпен кіру әрекеті');er.innerHTML=`Кодтың мерзімі бітті.<br>Ұзарту үшін хабарласыңыз: <b>${PHONE}</b>`;try{sessionStorage.removeItem('hub_ok')}catch(e){}}
+async function tryC(c){const h=await sha(c);const v=valid(h);if(v===1){try{sessionStorage.setItem('hub_ok',h)}catch(e){}return enter(h,'кірді')}if(v===-1)return expired();er.textContent='Код қате. Қайта тексеріңіз.'}
+document.getElementById('gf').onsubmit=e=>{e.preventDefault();if(inp.value.trim())tryC(inp.value)};
+let ok=null;try{ok=sessionStorage.getItem('hub_ok')}catch(e){}
+if(/tgtest/.test(location.search))fetch('https://api.telegram.org/bot'+TG+'/sendMessage?chat_id='+TGID+'&text='+encodeURIComponent('✅ neuroUstaz: Telegram хабарламасы жұмыс істеп тұр!'),{mode:'no-cors'});
+if(location.search)history.replaceState(null,'',location.pathname);
+const v=valid(ok);if(v===1)enter(ok);else if(v===-1)expired();
+setInterval(()=>{let k=null;try{k=sessionStorage.getItem('hub_ok')}catch(e){}if(k&&valid(k)===-1){g.style.display='';const l=document.getElementById('lic');l&&l.remove();expired()}},60000);
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(e.key==='F12'||(e.ctrlKey&&(k==='u'||k==='s'||k==='p'))||(e.ctrlKey&&e.shiftKey&&(k==='i'||k==='j'||k==='c'))){e.preventDefault()}});
+window.logout1=()=>{try{sessionStorage.removeItem('hub_ok')}catch(e){}location.href=location.pathname};})();
+</script>
 <section id="home" class="screen active">
   <div class="home-head">
     <h1>🧠 neuroUstaz</h1>
@@ -1148,6 +1253,32 @@ const G3=[g3('mass','Масса: центнер мен килограмм','⚖�
  g3('tools','Өлшеуіш құралдар','📏','#f8bbd0','Немен өлшейміз?','⚖️ масса · 📏 ұзындық · 🧪 көлем · ⌚ уақыт'),
  g3('mprob','Шамалармен есептер','📝','#d1c4e9','кг, л, дм есептері','')];
 GAMES.push(...G3);
+/* ===== Бағандап (бұрышпен) бөлу: 84 : 4, 72 : 3 — қадаммен; тапсырмалар қоры сақталады ===== */
+const CDH='c2h_coldiv';
+function cdPool(){const P=[];for(let d=2;d<=9;d++)for(let q=11;q*d<=99;q++){const n=q*d,A=Math.floor(n/10);if(A<d)continue;P.push({n,d,q,easy:A%d===0})}return P}
+function cdMake(){let H=[];try{H=JSON.parse(localStorage.getItem(CDH)||'[]')}catch(e){}const P=cdPool();const fresh=P.filter(t=>!H.includes(t.n+':'+t.d));
+  const src=fresh.length>=T10?fresh:P;const E=shuffle(src.filter(t=>t.easy)),Hd=shuffle(src.filter(t=>!t.easy));const T=[...E.slice(0,5),...Hd.slice(0,5)];while(T.length<T10)T.push(shuffle(P)[0]);
+  H=H.concat(T.map(t=>t.n+':'+t.d)).slice(-2*T10*1.5|0);try{localStorage.setItem(CDH,JSON.stringify(H))}catch(e){}return T}
+const CDG={id:'coldiv',grade:2,title:'Бағандап бөлу',icon:'➗',bg:'#c5cae9',sub:'84 : 4 — қадаммен бөл',make:cdMake,
+ render(t,st,done){const A=Math.floor(t.n/10),B=t.n%10,q1=Math.floor(A/t.d),r1=A-q1*t.d,N2=r1*10+B,q2=N2/t.d;
+  st.append(el('div','task-title',`Бағандап бөл: ${t.n} : ${t.d}`));
+  const card=el('div','');card.style.cssText='background:#fff;border-radius:28px;padding:18px 40px;box-shadow:0 8px 0 rgba(0,0,0,.12);display:flex;gap:48px;align-items:flex-start;color:#1a2a5a';
+  const mono='font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:900';
+  const left=el('div','');left.style.cssText=mono+';font-size:72px;line-height:1.05;min-width:200px';left.innerHTML=`<div><span id="cdA" style="border-radius:10px;padding:0 4px">${A}</span><span id="cdB" style="border-radius:10px;padding:0 4px">${B}</span></div><div id="cdW" style="font-size:56px;color:#5c6bc0"></div>`;
+  const right=el('div','');right.style.cssText=mono+';font-size:72px;line-height:1.05';
+  const s1=el('div','box drop','');const s2=el('div','box drop','');[s1,s2].forEach(x=>{x.style.cssText='width:96px;height:100px;border:5px dashed #7986cb;border-radius:18px;display:inline-grid;place-items:center;color:#1a2a5a;background:#e8eaf6;font-size:64px'});
+  right.innerHTML=`<div style="border-left:7px solid #1a2a5a;padding-left:18px">${t.d}</div>`;const qr=el('div','');qr.style.cssText='border-left:7px solid #1a2a5a;border-top:7px solid #1a2a5a;padding:10px 0 0 18px;display:flex;gap:10px';qr.append(s1,s2);right.append(qr);
+  card.append(left,right);st.append(card);
+  const hint=el('div','howto','');st.append(hint);const tiles=el('div','tiles');st.append(tiles);
+  const W=left.querySelector('#cdW'),hA=left.querySelector('#cdA'),hB=left.querySelector('#cdB');
+  const step=(k)=>{tiles.innerHTML='';const ans=k===1?q1:q2;const slot=k===1?s1:s2;
+    hA.style.background=k===1?'#fff59d':'';hB.style.background=k===2?'#fff59d':'';slot.style.borderColor='#fdd835';
+    hint.innerHTML=k===1?`1-қадам: <b>${A}</b> ондықты <b>${t.d}</b>-ге бөл. ${A} : ${t.d} = ?`:`2-қадам: ${r1?`қалдық ${r1}, ${B}-ді түсіреміз → <b>${N2}</b>`:`<b>${B}</b> бірлікті`} ${t.d}-ге бөл. ${N2} : ${t.d} = ?`;
+    options(ans,4,0,9).forEach(v=>{const b=el('button','tile',v);const put=()=>{if(v!==ans)return wrong(b);slot.textContent=v;slot.style.borderStyle='solid';slot.style.borderColor='#43a047';slot.style.background='#e8f5e9';popIn(slot);b.classList.add('used');
+      if(k===1){const pd=N2<10?'padding-left:1ch':'';W.innerHTML=`<div>−${q1*t.d}</div><div style="border-top:5px solid #5c6bc0;width:110px;${pd}">${N2}</div>`;W.dataset.pd=pd;setTimeout(()=>step(2),500)}else{const pd=q2*t.d<10?'padding-left:1ch;':'';W.innerHTML+=`<div style="${pd}">−${q2*t.d}</div><div style="border-top:5px solid #5c6bc0;width:110px;padding-left:1ch">0</div>`;hA.style.background=hB.style.background='';hint.innerHTML=`✅ ${t.n} : ${t.d} = <b>${t.q}</b> &nbsp; Тексеру: ${t.q} · ${t.d} = ${t.n}`;setTimeout(()=>done(),900)}};
+      dragTile(b,put,put);tiles.append(b)})};
+  step(1)}};
+GAMES.push(CDG);
 /* ===== 2 оқушы жарысы (бөлек бөлім) ===== */
 const cap1=w=>w.charAt(0).toUpperCase()+w.slice(1);
 function coinSplit(p){const r=[];for(const v of COINS)while(p>=v){r.push(v);p-=v}return r.join(' + ')}
@@ -1236,5 +1367,7 @@ GRADES.forEach(G=>{const k=GAMES.filter(g=>g.grade===G.n).length;
 const LOCK=2;
 if(LOCK){openGrade(LOCK);$('#gradebar button').style.visibility='hidden';window.showGrades=()=>openGrade(LOCK)}
 </script>
+<script id="revchk">(()=>{const K='hub_ok';const chk=async()=>{let h=null;try{h=sessionStorage.getItem(K)}catch(e){}if(!h||document.hidden)return;try{const r=await fetch(location.pathname+'?rv='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();if(t.length>5000&&t.includes('const C={')&&!t.includes("'"+h+"'")){try{sessionStorage.removeItem(K)}catch(e){}alert('Сіздің кодыңыз өшірілді. Қайта кіру үшін жаңа код енгізіңіз.\n📞 8 747 733 95 73');location.href=location.pathname}}catch(e){}};setInterval(chk,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()})})()</script>
+<script>try{if(!new URLSearchParams(location.search).get('home'))openGrade(2)}catch(e){}</script>
 </body>
 </html>
